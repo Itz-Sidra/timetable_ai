@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-py"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LectureType {
+  THEORY
+  LAB
+  TUTORIAL
+}
+
+enum RoomType {
+  THEORY
+  LAB
+}
+
+enum Day {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+model Year {
+  id        Int              @id @default(autoincrement())
+  name      String
+  divisions Division[]
+  subjects  TeacherSubject[]
+}
+
+model Division {
+  id     Int    @id @default(autoincrement())
+  name   String
+  yearId Int
+  year   Year   @relation(fields: [yearId], references: [id])
+
+  batches   Batch[]
+  timetable TimetableEntry[]
+}
+
+model Batch {
+  id         Int      @id @default(autoincrement())
+  name       String
+  divisionId Int
+  division   Division @relation(fields: [divisionId], references: [id])
+
+  timetable TimetableEntry[]
+}
+
+model Teacher {
+  id        Int    @id @default(autoincrement())
+  name      String
+  shortCode String @unique
+
+  subjects  TeacherSubject[]
+  timetable TimetableEntry[]
+
+  availability TeacherAvailability[]
+}
+
+model Subject {
+  id   Int    @id @default(autoincrement())
+  name String
+  code String @unique
+
+  theoryHours Int
+  labHours    Int
+  tutHours    Int
+
+  electiveGroupId Int?
+  electiveGroup   ElectiveGroup? @relation(fields: [electiveGroupId], references: [id])
+
+  teachers  TeacherSubject[]
+  timetable TimetableEntry[]
+}
+
+model TeacherSubject {
+  id Int @id @default(autoincrement())
+
+  teacherId Int
+  subjectId Int
+  yearId    Int
+
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+  year    Year    @relation(fields: [yearId], references: [id])
+}
+
+model Room {
+  id         Int      @id @default(autoincrement())
+  roomNumber String   @unique
+  roomType   RoomType
+  capacity   Int?
+
+  timetable TimetableEntry[]
+
+  availability RoomAvailability[]
+}
+
+model TimeSlot {
+  id        Int    @id @default(autoincrement())
+  day       Day
+  startTime String
+  endTime   String
+
+  timetable TimetableEntry[]
+
+  teacherAvailability TeacherAvailability[]
+  roomAvailability    RoomAvailability[]
+}
+
+model TimetableEntry {
+  id Int @id @default(autoincrement())
+
+  divisionId Int
+  batchId    Int?
+
+  subjectId  Int
+  teacherId  Int
+  roomId     Int
+  timeslotId Int
+
+  lectureType LectureType
+
+  division Division @relation(fields: [divisionId], references: [id])
+  batch    Batch?   @relation(fields: [batchId], references: [id])
+
+  subject Subject @relation(fields: [subjectId], references: [id])
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+
+  room     Room     @relation(fields: [roomId], references: [id])
+  timeslot TimeSlot @relation(fields: [timeslotId], references: [id])
+
+  @@unique([teacherId, timeslotId])
+  @@unique([roomId, timeslotId])
+}
+
+model ElectiveGroup {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  subjects Subject[]
+}
+
+model TeacherAvailability {
+  id Int @id @default(autoincrement())
+
+  teacherId   Int
+  timeslotId  Int
+  isAvailable Boolean @default(true)
+
+  teacher  Teacher  @relation(fields: [teacherId], references: [id])
+  timeslot TimeSlot @relation(fields: [timeslotId], references: [id])
+
+  @@unique([teacherId, timeslotId])
+}
+
+model RoomAvailability {
+  id Int @id @default(autoincrement())
+
+  roomId      Int
+  timeslotId  Int
+  isAvailable Boolean @default(true)
+
+  room     Room     @relation(fields: [roomId], references: [id])
+  timeslot TimeSlot @relation(fields: [timeslotId], references: [id])
+
+  @@unique([roomId, timeslotId])
+}

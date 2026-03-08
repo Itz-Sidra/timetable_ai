@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Generated Timetable</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Generated Timetable</h1>
+
+<div id="output"></div>
+
+<script>
+
+const data = JSON.parse(localStorage.getItem("schedulerInput"))
+
+document.getElementById("output").innerHTML =
+"<pre>"+JSON.stringify(data,null,2)+"</pre>"
+
+</script>
+
+</body>
+</html>
