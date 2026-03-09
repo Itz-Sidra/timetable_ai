@@ -1103,7 +1103,7 @@ function renderTimetableHTML(entries, title = '') {
   
   SLOT_TIMES.forEach(st => {
     const lbl = SLOT_LABELS[st] + '–' + SLOT_LABELS[st === 1600 ? 1700 : st + 100];
-    const isLunch = (st === 1200 || st === 1300);
+    const isLunch = (st === 1300);
     html += `<th${isLunch ? ' style="color:#f59e0b"' : ''}>${lbl}</th>`;
   });
   html += `</tr></thead><tbody>`;
@@ -1111,7 +1111,7 @@ function renderTimetableHTML(entries, title = '') {
   DAYS_ORDER.forEach(day => {
     html += `<tr><td class="day-header-cell">${day.slice(0,3)}</td>`;
     SLOT_TIMES.forEach(st => {
-      const isLunch = (st === 1200 || st === 1300);
+      const isLunch = (st === 1300);
       const e = grid[day]?.[st];
       if (isLunch && !e) {
         html += `<td><div class="cell-entry lunch"><div class="cell-subject" style="color:#f59e0b">LUNCH</div></div></td>`;

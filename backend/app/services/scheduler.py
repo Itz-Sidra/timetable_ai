@@ -1,28 +1,27 @@
 """
-AI Timetable Scheduler — Division A only.
+Hybrid scheduler: Greedy labs + DFS theory/tutorial.
 
-Target weekly schedule:
-  AI:     2 THEORY  (different days)
-  OS:     2 THEORY  (different days)
-  ADS:    2 THEORY  (different days)
-  POCACD: 2 THEORY  (different days)
-  RAAD:   1 THEORY
-  DV:     2 THEORY  (different days) + 1 TUTORIAL
-  LAB:    B1=ADS(2h), B2=POCACD(2h), B3=AI(2h) — all on different days from each other
-  ───────────────────────────────────────────────
-  Total: 11 theory + 3 lab + 1 tut = 15 sessions
+Weekly schedule for Division A:
+  THEORY (div-wide):  AI×2, OS×2, ADS×2, POCACD×2, RAAD×1, FCTC×1, DV×2  = 12
+  LAB (per-batch):    AI, OS, ADS, POCACD — each batch gets all 4            = 12
+  TUTORIAL (per-batch): DT × 3 batches = 3  (one per batch, different slots)
+  TUTORIAL (div-wide):  DV × 1                                               =  1
+  TOTAL: 28 sessions
 
-Spread strategy:
-  - Shuffle slots by day first so DFS doesn't pack Mon/Tue
-  - Max 3 theory slots per day for the division
-  - Labs on afternoons (prefer 14:00+) to leave mornings for theory
+Lunch: 13:00 only (single 1-hour lunch)
+Theory: morning 08:00-12:00 (slots 800,900,1000,1100)
+        + 12:00 slot available (before lunch)
+Labs:   afternoon 14:00-16:00
+DT tut: afternoon, one per batch at different slots
+DV tut: afternoon, div-wide
 """
 from app.models.session import Session
 
-LUNCH     = {1200, 1300}
-BATCH_LAB = {0: "ADS", 1: "POCACD", 2: "AI"}
-ELECTIVE  = "DV"
-DAYS      = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
+LUNCH        = {1300}          # only 13:00 is lunch
+THEORY_END   = 1300            # theory before lunch
+LAB_START    = 1400            # labs after lunch
+LAB_SUBJECTS = ["ADS", "POCACD", "AI", "OS"]
+DAYS         = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
 MAX_THEORY_PER_DAY = 3
 
 
@@ -30,40 +29,48 @@ def expand_sessions(subjects, division, batches):
     subj = {s.code: s for s in subjects}
     sessions = []
 
-    for code in ["AI", "OS", "ADS", "POCACD", "RAAD", ELECTIVE]:
+    # Division-wide theory
+    for code in ["AI", "OS", "ADS", "POCACD", "RAAD", "FCTC", "DV"]:
         s = subj.get(code)
-        if not s:
+        if not s or s.theoryHours == 0:
             continue
         for _ in range(s.theoryHours):
-            sessions.append(Session(
-                s.code, s.name, "THEORY", 1,
+            sessions.append(Session(s.code, s.name, "THEORY", 1,
                 division_id=division.id,
-                elective_group_id=getattr(s, 'electiveGroupId', None)
-            ))
+                elective_group_id=getattr(s, 'electiveGroupId', None)))
 
+    # Per-batch labs: all 4 subjects per batch
     for bidx, batch in enumerate(batches):
-        code = BATCH_LAB.get(bidx)
-        s = subj.get(code)
-        if not s:
-            continue
-        sess = Session(s.code, s.name, "LAB", 2,
-                       division_id=division.id, elective_group_id=None)
-        sess.batch_index = bidx
-        sessions.append(sess)
+        for lab_code in LAB_SUBJECTS:
+            s = subj.get(lab_code)
+            if not s or s.labHours == 0:
+                continue
+            sess = Session(s.code, s.name, "LAB", 2,
+                division_id=division.id, elective_group_id=None)
+            sess.batch_index = bidx
+            sessions.append(sess)
 
-    dv = subj.get(ELECTIVE)
-    if dv and getattr(dv, 'tutHours', 0) > 0:
-        sess = Session(dv.code, dv.name, "TUTORIAL", 1,
-                       division_id=division.id,
-                       elective_group_id=getattr(dv, 'electiveGroupId', None))
-        sess.batch_index = 0
-        sessions.append(sess)
+    # DT tutorial: one per batch (3 sessions)
+    dt = subj.get("DT")
+    if dt and dt.tutHours > 0:
+        for bidx, batch in enumerate(batches):
+            sess = Session(dt.code, dt.name, "TUTORIAL", 1,
+                division_id=division.id, elective_group_id=None)
+            sess.batch_index = bidx
+            sess.tut_type = "per_batch"
+            sessions.append(sess)
 
-    # THEORY first, then LAB, then TUTORIAL
-    sessions.sort(key=lambda s: (
-        0 if s.lecture_type == "THEORY" else
-        1 if s.lecture_type == "LAB" else 2
-    ))
+    # DV tutorial: per-batch (3 sessions, one per batch)
+    dv = subj.get("DV")
+    if dv and dv.tutHours > 0:
+        for bidx, batch in enumerate(batches):
+            sess = Session(dv.code, dv.name, "TUTORIAL", 1,
+                division_id=division.id,
+                elective_group_id=getattr(dv, 'electiveGroupId', None))
+            sess.batch_index = bidx
+            sess.tut_type = "per_batch"
+            sessions.append(sess)
+
     return sessions
 
 
@@ -79,51 +86,164 @@ def nxt(slot, by_day):
     return None if n.startTime in LUNCH else n
 
 
+# ── Greedy lab + per-batch tutorial assignment ────────────────────────────────
+
+def assign_greedy(lab_sessions, dt_tut_sessions, batches, ts_map, l_rooms, t_rooms, slots_by_day):
+    teacher_slot = set()
+    room_slot    = set()
+    batch_slot   = set()
+    div_slot     = set()
+    batch_day    = set()  # (batch_id, day) — one lab per batch per day
+
+    # Afternoon slot pairs for labs
+    afternoon_pairs = []
+    for day in DAYS:
+        for slot in slots_by_day.get(day, []):
+            if slot.startTime < LAB_START:
+                continue
+            nslot = nxt(slot, slots_by_day)
+            if nslot:
+                afternoon_pairs.append((day, slot, nslot))
+
+    # Afternoon single slots for tutorials
+    afternoon_singles = []
+    for day in DAYS:
+        for slot in slots_by_day.get(day, []):
+            if slot.startTime >= LAB_START and not is_lunch(slot):
+                afternoon_singles.append((day, slot))
+
+    # Sort: same lab subject goes on same day for all batches
+    lab_by_subject = {}
+    for sess in lab_sessions:
+        lab_by_subject.setdefault(sess.subject_code, []).append(sess)
+
+    # Assign each lab subject's 3 batches to the same day (different rooms/teachers)
+    for lab_code in LAB_SUBJECTS:
+        batch_labs = lab_by_subject.get(lab_code, [])
+        assigned_day = None
+        assigned_slot = None
+        assigned_nslot = None
+
+        for (day, slot, nslot) in afternoon_pairs:
+            # Try to fit all 3 batches on this day/slot
+            can_fit = True
+            temp = []
+            for sess in batch_labs:
+                bidx  = getattr(sess, 'batch_index', 0)
+                batch = batches[bidx]
+                if (batch.id, day) in batch_day:
+                    can_fit = False; break
+                tlist = ts_map.get((lab_code, "LAB"), [])
+                assigned_t = None
+                assigned_r = None
+                for t in tlist:
+                    if (t.id, slot.id) in teacher_slot or (t.id, nslot.id) in teacher_slot:
+                        continue
+                    for r in l_rooms:
+                        if (r.id, slot.id) in room_slot or (r.id, nslot.id) in room_slot:
+                            continue
+                        if (batch.id, slot.id) in batch_slot:
+                            continue
+                        assigned_t = t; assigned_r = r; break
+                    if assigned_t:
+                        break
+                if not assigned_t:
+                    can_fit = False; break
+                temp.append((sess, batch, assigned_t, assigned_r))
+
+            if can_fit and len(temp) == len(batch_labs):
+                # Commit all 3 batch labs on this slot
+                for (sess, batch, t, r) in temp:
+                    bidx = getattr(sess, 'batch_index', 0)
+                    for sid in (slot.id, nslot.id):
+                        teacher_slot.add((t.id, sid))
+                        room_slot.add((r.id, sid))
+                        batch_slot.add((batch.id, sid))
+                    batch_day.add((batch.id, day))
+                    sess.teacher_id = t.id; sess.teacher = t.shortCode
+                    sess.room_id = r.id;    sess.room = r.roomNumber
+                    sess.timeslot = slot.id; sess.timeslot_day = slot.day
+                    sess.batch_assignments = [{
+                        "teacher_id": t.id, "teacher": t.shortCode,
+                        "room_id": r.id, "room": r.roomNumber,
+                        "slots": [slot.id, nslot.id],
+                        "slot_id": slot.id, "next_slot_id": nslot.id
+                    }]
+                assigned_day = day
+                break
+
+        if not assigned_day:
+            print(f"  ⚠️  Could not assign LAB {lab_code} for all batches", flush=True)
+            return False, teacher_slot, room_slot, div_slot
+
+    # Assign all per-batch tutorials (DT + DV): one per batch, different slots
+    for sess in dt_tut_sessions:
+        bidx  = getattr(sess, 'batch_index', 0)
+        batch = batches[bidx]
+        tlist = ts_map.get((sess.subject_code, "TUTORIAL"), [])
+        assigned = False
+        for (day, slot) in afternoon_singles:
+            if (batch.id, slot.id) in batch_slot:
+                continue
+            for t in tlist:
+                if (t.id, slot.id) in teacher_slot:
+                    continue
+                for r in t_rooms:
+                    if (r.id, slot.id) in room_slot:
+                        continue
+                    teacher_slot.add((t.id, slot.id))
+                    room_slot.add((r.id, slot.id))
+                    batch_slot.add((batch.id, slot.id))
+                    sess.teacher_id = t.id; sess.teacher = t.shortCode
+                    sess.room_id = r.id;    sess.room = r.roomNumber
+                    sess.timeslot = slot.id; sess.timeslot_day = slot.day
+                    sess._batch_id = batch.id
+                    assigned = True; break
+                if assigned: break
+            if assigned: break
+        if not assigned:
+            print(f"  ⚠️  Could not assign DT tutorial B{bidx+1}", flush=True)
+
+    return True, teacher_slot, room_slot, div_slot
+
+
+# ── DFS for theory + DV tutorial ─────────────────────────────────────────────
+
 class CS:
-    def __init__(self):
-        self.teacher_slot  = set()   # (teacher_id, slot_id)
-        self.room_slot     = set()   # (room_id, slot_id)
-        self.div_slot      = set()   # (division_id, slot_id)
-        self.batch_slot    = set()   # (batch_id, slot_id)
-        self.div_subj_day  = set()   # (division_id, code, day) — max 1 theory per subj per day
-        self.div_day_count = {}      # (division_id, day) -> int — spread theory across days
-        self.room_count    = {}      # room_id -> int
+    def __init__(self, teacher_slot, room_slot):
+        self.teacher_slot  = set(teacher_slot)
+        self.room_slot     = set(room_slot)
+        self.div_slot      = set()
+        self.div_subj_day  = set()
+        self.div_day_count = {}
+        self.room_count    = {}
 
 
 def ok_th(cs, div_id, code, tid, rid, slot):
-    day_count = cs.div_day_count.get((div_id, slot.day), 0)
     return (
+        slot.startTime < THEORY_END and
+        not is_lunch(slot) and
         (tid, slot.id) not in cs.teacher_slot and
         (rid, slot.id) not in cs.room_slot and
         (div_id, slot.id) not in cs.div_slot and
         (div_id, code, slot.day) not in cs.div_subj_day and
-        day_count < MAX_THEORY_PER_DAY
+        cs.div_day_count.get((div_id, slot.day), 0) < MAX_THEORY_PER_DAY
     )
 
-def ok_lab(cs, tid, rid, bid, div_id, s1, s2):
-    return all(
-        (tid, sid) not in cs.teacher_slot and
-        (rid, sid) not in cs.room_slot and
-        (bid, sid) not in cs.batch_slot and
-        (div_id, sid) not in cs.div_slot
-        for sid in (s1, s2)
-    )
-
-def ok_tut(cs, tid, rid, bid, sid):
+def ok_tut_div(cs, tid, rid, div_id, slot_id):
     return (
-        (tid, sid) not in cs.teacher_slot and
-        (rid, sid) not in cs.room_slot and
-        (bid, sid) not in cs.batch_slot
+        (tid, slot_id) not in cs.teacher_slot and
+        (rid, slot_id) not in cs.room_slot and
+        (div_id, slot_id) not in cs.div_slot
     )
-
 
 def do_th(cs, s, t, r, slot):
     cs.teacher_slot.add((t.id, slot.id))
     cs.room_slot.add((r.id, slot.id))
     cs.div_slot.add((s.division_id, slot.id))
     cs.div_subj_day.add((s.division_id, s.subject_code, slot.day))
-    key = (s.division_id, slot.day)
-    cs.div_day_count[key] = cs.div_day_count.get(key, 0) + 1
+    k = (s.division_id, slot.day)
+    cs.div_day_count[k] = cs.div_day_count.get(k, 0) + 1
     cs.room_count[r.id] = cs.room_count.get(r.id, 0) + 1
     s.teacher_id=t.id; s.teacher=t.shortCode
     s.room_id=r.id;    s.room=r.roomNumber
@@ -134,121 +254,65 @@ def un_th(cs, s, t, r, slot):
     cs.room_slot.discard((r.id, slot.id))
     cs.div_slot.discard((s.division_id, slot.id))
     cs.div_subj_day.discard((s.division_id, s.subject_code, slot.day))
-    key = (s.division_id, slot.day)
-    cs.div_day_count[key] = max(0, cs.div_day_count.get(key, 1) - 1)
+    k = (s.division_id, slot.day)
+    cs.div_day_count[k] = max(0, cs.div_day_count.get(k, 1) - 1)
     cs.room_count[r.id] = max(0, cs.room_count.get(r.id, 1) - 1)
     s.teacher_id=s.teacher=s.room_id=s.room=s.timeslot=s.timeslot_day=None
 
-def do_lab(cs, s, t, r, bid, slot, nslot):
-    for sid in (slot.id, nslot.id):
-        cs.teacher_slot.add((t.id, sid))
-        cs.room_slot.add((r.id, sid))
-        cs.batch_slot.add((bid, sid))
-    s.teacher_id=t.id; s.teacher=t.shortCode
-    s.room_id=r.id;    s.room=r.roomNumber
-    s.timeslot=slot.id; s.timeslot_day=slot.day
-    s.batch_assignments=[{
-        "teacher_id":t.id,"teacher":t.shortCode,
-        "room_id":r.id,"room":r.roomNumber,
-        "slots":[slot.id,nslot.id],"slot_id":slot.id,"next_slot_id":nslot.id
-    }]
-
-def un_lab(cs, s, t, r, bid, slot, nslot):
-    for sid in (slot.id, nslot.id):
-        cs.teacher_slot.discard((t.id, sid))
-        cs.room_slot.discard((r.id, sid))
-        cs.batch_slot.discard((bid, sid))
-    s.teacher_id=s.teacher=s.room_id=s.room=s.timeslot=s.timeslot_day=None
-    s.batch_assignments=[]
-
-def do_tut(cs, s, t, r, bid, slot):
+def do_tut(cs, s, t, r, div_id, slot):
     cs.teacher_slot.add((t.id, slot.id))
     cs.room_slot.add((r.id, slot.id))
-    cs.batch_slot.add((bid, slot.id))
+    cs.div_slot.add((div_id, slot.id))
     s.teacher_id=t.id; s.teacher=t.shortCode
     s.room_id=r.id;    s.room=r.roomNumber
     s.timeslot=slot.id; s.timeslot_day=slot.day
-    s._batch_id=bid
+    s._batch_id=None
 
-def un_tut(cs, s, t, r, bid, slot):
+def un_tut(cs, s, t, r, div_id, slot):
     cs.teacher_slot.discard((t.id, slot.id))
     cs.room_slot.discard((r.id, slot.id))
-    cs.batch_slot.discard((bid, slot.id))
+    cs.div_slot.discard((div_id, slot.id))
     s.teacher_id=s.teacher=s.room_id=s.room=s.timeslot=s.timeslot_day=None
     s._batch_id=None
 
-
-def dfs(sessions, idx, cs, ts_map, t_rooms, l_rooms, slots_by_day, batches):
+def dfs(sessions, idx, cs, ts_map, t_rooms, slots_by_day):
     if idx == len(sessions):
         return True
-
-    s     = sessions[idx]
+    s = sessions[idx]
     tlist = ts_map.get((s.subject_code, s.lecture_type), [])
+    sorted_rooms = sorted(t_rooms, key=lambda r: cs.room_count.get(r.id, 0))
 
     if s.lecture_type == "THEORY":
-        sorted_rooms = sorted(t_rooms, key=lambda r: cs.room_count.get(r.id, 0))
-        # Iterate day by day to naturally spread sessions
         for day in DAYS:
-            day_slots = slots_by_day.get(day, [])
-            for slot in day_slots:
-                if is_lunch(slot):
+            for slot in slots_by_day.get(day, []):
+                if slot.startTime >= THEORY_END or is_lunch(slot):
                     continue
                 for t in tlist:
                     for r in sorted_rooms:
                         if not ok_th(cs, s.division_id, s.subject_code, t.id, r.id, slot):
                             continue
                         do_th(cs, s, t, r, slot)
-                        if dfs(sessions, idx+1, cs, ts_map, t_rooms, l_rooms, slots_by_day, batches):
+                        if dfs(sessions, idx+1, cs, ts_map, t_rooms, slots_by_day):
                             return True
                         un_th(cs, s, t, r, slot)
 
-    elif s.lecture_type == "LAB":
-        bidx  = getattr(s, "batch_index", 0)
-        batch = batches[bidx] if bidx < len(batches) else None
-        if not batch:
-            return False
-        # Labs: prefer afternoon slots (14:00+) to keep mornings for theory
-        all_slots = []
+    elif s.lecture_type == "TUTORIAL":  # DV div-wide only
         for day in DAYS:
             for slot in slots_by_day.get(day, []):
-                all_slots.append(slot)
-        afternoon = [s for s in all_slots if s.startTime >= 1400 and not is_lunch(s)]
-        morning   = [s for s in all_slots if s.startTime < 1200 and not is_lunch(s)]
-        ordered   = afternoon + morning
-
-        for slot in ordered:
-            nslot = nxt(slot, slots_by_day)
-            if not nslot:
-                continue
-            for t in tlist:
-                for r in l_rooms:
-                    if not ok_lab(cs, t.id, r.id, batch.id, s.division_id, slot.id, nslot.id):
-                        continue
-                    do_lab(cs, s, t, r, batch.id, slot, nslot)
-                    if dfs(sessions, idx+1, cs, ts_map, t_rooms, l_rooms, slots_by_day, batches):
-                        return True
-                    un_lab(cs, s, t, r, batch.id, slot, nslot)
-
-    elif s.lecture_type == "TUTORIAL":
-        bidx  = getattr(s, "batch_index", 0)
-        batch = batches[bidx] if bidx < len(batches) else None
-        if not batch:
-            return False
-        for day in DAYS:
-            for slot in slots_by_day.get(day, []):
-                if is_lunch(slot):
+                if slot.startTime < LAB_START or is_lunch(slot):
                     continue
                 for t in tlist:
                     for r in t_rooms:
-                        if not ok_tut(cs, t.id, r.id, batch.id, slot.id):
+                        if not ok_tut_div(cs, t.id, r.id, s.division_id, slot.id):
                             continue
-                        do_tut(cs, s, t, r, batch.id, slot)
-                        if dfs(sessions, idx+1, cs, ts_map, t_rooms, l_rooms, slots_by_day, batches):
+                        do_tut(cs, s, t, r, s.division_id, slot)
+                        if dfs(sessions, idx+1, cs, ts_map, t_rooms, slots_by_day):
                             return True
-                        un_tut(cs, s, t, r, batch.id, slot)
-
+                        un_tut(cs, s, t, r, s.division_id, slot)
     return False
 
+
+# ── Entry point ───────────────────────────────────────────────────────────────
 
 def generate_timetable(data):
     teachers            = data["teachers"]
@@ -282,19 +346,32 @@ def generate_timetable(data):
             ts_map[key].append(t)
 
     division = divisions[0]
-    sessions = expand_sessions(subjects, division, batches)
+    all_sessions = expand_sessions(subjects, division, batches)
 
-    labs   = sum(1 for s in sessions if s.lecture_type=="LAB")
-    tuts   = sum(1 for s in sessions if s.lecture_type=="TUTORIAL")
-    theory = sum(1 for s in sessions if s.lecture_type=="THEORY")
-    print(f"  Sessions: {len(sessions)}  LAB={labs} TUT={tuts} THEORY={theory}", flush=True)
+    lab_sessions    = [s for s in all_sessions if s.lecture_type == "LAB"]
+    batch_tut_sessions = [s for s in all_sessions
+                          if s.lecture_type == "TUTORIAL" and getattr(s, 'tut_type', '') == "per_batch"]
+    theory_sessions = [s for s in all_sessions if s.lecture_type == "THEORY"]
 
-    cs = CS()
-    ok = dfs(sessions, 0, cs, ts_map, t_rooms, l_rooms, slots_by_day, batches)
+    print(f"  Sessions: {len(all_sessions)}  "
+          f"LAB={len(lab_sessions)} TUT={len(batch_tut_sessions)} THEORY={len(theory_sessions)}", flush=True)
 
+    # Step 1: Greedy — labs + all per-batch tutorials (DT + DV)
+    print("  Assigning labs + tutorials (greedy)...", flush=True)
+    ok, used_t, used_r, used_d = assign_greedy(
+        lab_sessions, batch_tut_sessions, batches, ts_map, l_rooms, t_rooms, slots_by_day)
     if not ok:
-        print("  ❌ No solution found", flush=True)
+        print("  ❌ Greedy assignment failed", flush=True)
+        return None
+    print("  ✅ Labs + tutorials assigned", flush=True)
+
+    # Step 2: DFS — theory only
+    print("  Scheduling theory (DFS)...", flush=True)
+    cs = CS(used_t, used_r)
+    dfs_sessions = theory_sessions
+    if not dfs(dfs_sessions, 0, cs, ts_map, t_rooms, slots_by_day):
+        print("  ❌ Theory/DV tutorial scheduling failed", flush=True)
         return None
 
-    print(f"  ✅ Scheduled {len(sessions)} sessions", flush=True)
-    return sessions
+    print(f"  ✅ All {len(all_sessions)} sessions scheduled", flush=True)
+    return all_sessions

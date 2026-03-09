@@ -70,6 +70,14 @@ async def generate():
     if sessions is None:
         return {"error": "No valid timetable found — constraints too tight"}
 
+    # Reconnect after long DFS (Neon drops idle connections)
+    print("Reconnecting to DB before save...", flush=True)
+    try:
+        await db.disconnect()
+    except Exception:
+        pass
+    await db.connect()
+
     # Clear old entries
     await db.timetableentry.delete_many()
 
@@ -106,11 +114,16 @@ async def generate():
                 errors += 1
                 print(f"Skip THEORY {s.subject_code}: {e}")
 
-        # ── TUTORIAL (batch-specific)
+        # ── TUTORIAL (all are per-batch: DT and DV)
         elif s.lecture_type == "TUTORIAL":
             if not s.teacher_id or not s.room_id or not s.timeslot:
                 continue
-            batch_id = getattr(s, "_batch_id", None)
+            bidx = getattr(s, "batch_index", None)
+            if bidx is not None:
+                batch_obj = div_batches[bidx] if bidx < len(div_batches) else None
+                batch_id = batch_obj.id if batch_obj else None
+            else:
+                batch_id = getattr(s, "_batch_id", None)
             try:
                 await db.timetableentry.create(data={
                     "divisionId":  s.division_id,
