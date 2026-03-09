@@ -28,10 +28,10 @@ enum Day {
 }
 
 model Year {
-  id        Int              @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
   divisions Division[]
-  subjects  TeacherSubject[]
+  subjects  Subject[]
 }
 
 model Division {
@@ -69,6 +69,9 @@ model Subject {
   name String
   code String @unique
 
+  yearId Int
+  year   Year @relation(fields: [yearId], references: [id])
+
   theoryHours Int
   labHours    Int
   tutHours    Int
@@ -85,11 +88,13 @@ model TeacherSubject {
 
   teacherId Int
   subjectId Int
-  yearId    Int
+
+  lectureType LectureType
 
   teacher Teacher @relation(fields: [teacherId], references: [id])
   subject Subject @relation(fields: [subjectId], references: [id])
-  year    Year    @relation(fields: [yearId], references: [id])
+
+  @@unique([teacherId, subjectId, lectureType])
 }
 
 model Room {
@@ -104,15 +109,17 @@ model Room {
 }
 
 model TimeSlot {
-  id        Int    @id @default(autoincrement())
+  id        Int @id @default(autoincrement())
   day       Day
-  startTime String
-  endTime   String
+  startTime Int
+  endTime   Int
 
   timetable TimetableEntry[]
 
   teacherAvailability TeacherAvailability[]
   roomAvailability    RoomAvailability[]
+
+  @@unique([day, startTime])
 }
 
 model TimetableEntry {
@@ -139,6 +146,8 @@ model TimetableEntry {
 
   @@unique([teacherId, timeslotId])
   @@unique([roomId, timeslotId])
+  @@unique([divisionId, timeslotId])
+  @@unique([batchId, timeslotId])
 }
 
 model ElectiveGroup {
