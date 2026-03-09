@@ -146,7 +146,6 @@ model TimetableEntry {
 
   @@unique([teacherId, timeslotId])
   @@unique([roomId, timeslotId])
-  @@unique([divisionId, timeslotId])
   @@unique([batchId, timeslotId])
 }
 

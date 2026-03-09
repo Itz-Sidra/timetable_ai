@@ -1,36 +1,1223 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>AI Timetable Generator</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIT SY Timetable — AI Scheduler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0a0c10;
+    --surface:  #111419;
+    --card:     #161b22;
+    --border:   #21262d;
+    --accent:   #00d4aa;
+    --accent2:  #7c3aed;
+    --warn:     #f59e0b;
+    --danger:   #ef4444;
+    --text:     #e6edf3;
+    --muted:    #8b949e;
+    --theory:   #1d4ed8;
+    --lab:      #065f46;
+    --tutorial: #7c2d12;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, #ffffff04 39px, #ffffff04 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, #ffffff04 39px, #ffffff04 40px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, #0d1117 0%, transparent 100%);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-mark {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 0 20px #00d4aa33;
+  }
+
+  .logo-text h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .logo-text p {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.5px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+
+  .btn:hover { border-color: var(--muted); background: #1c2128; }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    font-weight: 700;
+    box-shadow: 0 0 16px #00d4aa44;
+  }
+
+  .btn-primary:hover {
+    background: #00bfa0;
+    border-color: #00bfa0;
+    box-shadow: 0 0 24px #00d4aa66;
+  }
+
+  .btn-danger {
+    background: #1a0808;
+    border-color: #5b1c1c;
+    color: var(--danger);
+  }
+
+  .btn-danger:hover { background: #2a0f0f; border-color: var(--danger); }
+
+  /* ── STATUS BADGE ── */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .status-badge.ready    { background: #0d2818; border: 1px solid #065f46; color: #34d399; }
+  .status-badge.running  { background: #1a1000; border: 1px solid #92400e; color: var(--warn); }
+  .status-badge.error    { background: #1a0808; border: 1px solid #5b1c1c; color: var(--danger); }
+  .status-badge.idle     { background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+  .pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+           animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+  /* ── MAIN LAYOUT ── */
+  .app { 
+    position: relative; 
+    z-index: 1; 
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: calc(100vh - 73px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    overflow-y: auto;
+    background: var(--surface);
+  }
+
+  .sidebar-section { margin-bottom: 8px; }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 20px 8px;
+    display: block;
+  }
+
+  .sidebar-item {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all .1s;
+    border-left: 2px solid transparent;
+    color: var(--muted);
+  }
+
+  .sidebar-item:hover { background: #ffffff08; color: var(--text); }
+  .sidebar-item.active { 
+    background: #00d4aa0f; 
+    border-left-color: var(--accent); 
+    color: var(--text);
+  }
+
+  .sidebar-item .icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    background: #ffffff0a;
+    flex-shrink: 0;
+  }
+
+  .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    overflow-y: auto;
+    padding: 32px 40px;
+    background: var(--bg);
+  }
+
+  /* ── OVERVIEW / CONTROL PANEL ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 28px;
+  }
+
+  .page-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .page-header p { color: var(--muted); font-size: 14px; }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    transition: border-color .2s;
+  }
+
+  .stat-card:hover { border-color: var(--muted); }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── AI CONSOLE ── */
+  .console-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  .console-header {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0d1117;
+  }
+
+  .console-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .console-body {
+    padding: 16px 18px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+    min-height: 100px;
+    max-height: 220px;
+    overflow-y: auto;
+    color: var(--accent);
+    background: #050709;
+  }
+
+  .console-body .log-line { opacity: 0.85; }
+  .console-body .log-line.info { color: var(--accent); }
+  .console-body .log-line.warn { color: var(--warn); }
+  .console-body .log-line.error { color: var(--danger); }
+  .console-body .log-line.success { color: #34d399; }
+
+  /* ── TIMETABLE GRID ── */
+  .timetable-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .select-styled {
+    padding: 9px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    cursor: pointer;
+    min-width: 140px;
+  }
+
+  .select-styled:focus { outline: 1px solid var(--accent); }
+
+  .timetable-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  table.tt {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  table.tt th {
+    background: #0d1117;
+    padding: 12px 10px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+    min-width: 100px;
+  }
+
+  table.tt th.day-col { min-width: 80px; }
+
+  table.tt td {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    vertical-align: top;
+    min-height: 60px;
+    height: 60px;
+    position: relative;
+  }
+
+  .cell-empty { 
+    height: 60px;
+    background: repeating-linear-gradient(
+      -45deg, transparent, transparent 4px, #ffffff02 4px, #ffffff02 5px
+    );
+  }
+
+  .cell-entry {
+    padding: 6px 8px;
+    height: 100%;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: filter .1s;
+  }
+
+  .cell-entry:hover { filter: brightness(1.3); }
+
+  .cell-entry.theory  { background: linear-gradient(135deg, #1d4ed820, #1d4ed808); border-left: 3px solid #3b82f6; }
+  .cell-entry.lab     { background: linear-gradient(135deg, #065f4620, #065f4608); border-left: 3px solid #10b981; }
+  .cell-entry.tutorial{ background: linear-gradient(135deg, #7c2d1220, #7c2d1208); border-left: 3px solid #f97316; }
+  .cell-entry.lunch   { background: repeating-linear-gradient(-45deg, #1a1a0a, #1a1a0a 6px, #1a1a12 6px, #1a1a12 12px); border-left: 3px solid var(--warn); }
+
+  .cell-subject {
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .cell-teacher {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .cell-room {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: #ffffff10;
+    color: var(--muted);
+    width: fit-content;
+  }
+
+  .day-header-cell {
+    padding: 10px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    border-right: 1px solid var(--border);
+    background: #050709;
+    writing-mode: horizontal-tb;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── LOADING SPINNER ── */
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid #ffffff20;
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── TOAST ── */
+  #toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    max-width: 320px;
+    animation: slideIn .25s ease;
+    border: 1px solid;
+  }
+
+  .toast.success { background: #0d2818; border-color: #065f46; color: #34d399; }
+  .toast.error   { background: #1a0808; border-color: #5b1c1c; color: var(--danger); }
+  .toast.info    { background: var(--card); border-color: var(--border); color: var(--text); }
+
+  @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* ── SUBJECT LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 4px 10px;
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  /* ── SYLLABUS PAGE ── */
+  .unit-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: border-color .2s;
+  }
+
+  .unit-card:hover { border-color: var(--muted); }
+
+  .unit-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .unit-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--accent2);
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .unit-title { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .unit-hours { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+
+  .unit-topics {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+    padding-left: 8px;
+    border-left: 2px solid var(--border);
+  }
+
+  /* ── TEACHER PAGE ── */
+  .teacher-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .teacher-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .teacher-card:hover { border-color: var(--accent); box-shadow: 0 0 16px #00d4aa18; }
+  .teacher-card.selected { border-color: var(--accent); background: #00d4aa0a; }
+
+  .teacher-code {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .teacher-name { font-size: 13px; color: var(--muted); }
+
+  .teacher-subjects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .subject-tag {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .subject-tag.theory   { border-color: #3b82f6; color: #93c5fd; background: #1d4ed820; }
+  .subject-tag.lab      { border-color: #10b981; color: #6ee7b7; background: #065f4620; }
+  .subject-tag.tutorial { border-color: #f97316; color: #fdba74; background: #7c2d1220; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 20px; }
+    header { padding: 16px 20px; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; }
+</style>
+</head>
 <body>
 
-<h1>AI Timetable Scheduler</h1>
+<header>
+  <div class="logo">
+    <div class="logo-mark">AI</div>
+    <div class="logo-text">
+      <h1>VIT Timetable Generator</h1>
+      <p>SY — CSE (AI&ML) · A.Y. 2025-26</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <span id="status-badge" class="status-badge idle">
+      <span class="pulse"></span>
+      IDLE
+    </span>
+    <button class="btn btn-danger" onclick="runSeed()">⚡ Seed DB</button>
+    <button class="btn btn-primary" id="gen-btn" onclick="generateTimetable()">
+      ✦ Generate Timetable
+    </button>
+  </div>
+</header>
 
-<form id="schedulerForm">
+<div class="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Overview</span>
+      <div class="sidebar-item active" onclick="showPage('overview', this)">
+        <span class="icon">📊</span> Dashboard
+      </div>
+    </div>
 
-<h3>Divisions</h3>
-<input type="text" id="divisions" placeholder="A,B,C,D,E,F,SEDA">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Timetables</span>
+      <div class="sidebar-item" onclick="showPage('division-tt', this)">
+        <span class="icon">🏛</span> By Division
+      </div>
+      <div class="sidebar-item" onclick="showPage('batch-tt', this)">
+        <span class="icon">👥</span> By Batch
+      </div>
+      <div class="sidebar-item" onclick="showPage('teacher-tt', this)">
+        <span class="icon">👨‍🏫</span> By Teacher
+      </div>
+      <div class="sidebar-item" onclick="showPage('room-tt', this)">
+        <span class="icon">🚪</span> By Room
+      </div>
+    </div>
 
-<h3>Theory Rooms</h3>
-<input type="text" id="theoryRooms" placeholder="4005,4006,4307">
+    <div class="sidebar-divider"></div>
 
-<h3>Lab Rooms</h3>
-<input type="text" id="labRooms" placeholder="4304,4104,4007,4008">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Reference</span>
+      <div class="sidebar-item" onclick="showPage('syllabus', this)">
+        <span class="icon">📖</span> AI Syllabus
+      </div>
+      <div class="sidebar-item" onclick="showPage('teachers-ref', this)">
+        <span class="icon">🎓</span> Faculty
+      </div>
+    </div>
+  </nav>
 
-<h3>Subjects</h3>
-<input type="text" id="subjects" placeholder="AI,ADS,OS,TOC,DV">
+  <!-- CONTENT -->
+  <main class="content">
 
-<h3>Timeslots</h3>
-<input type="text" id="timeslots" placeholder="8,9,10,11,12,2,3,4,5">
+    <!-- ── OVERVIEW ── -->
+    <div id="page-overview" class="page active">
+      <div class="page-header">
+        <h2>System Overview</h2>
+        <p>AI-powered constraint satisfaction scheduler for SY divisions</p>
+      </div>
 
-<button type="submit">Generate Timetable</button>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">7</div>
+          <div class="stat-label">Divisions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">21</div>
+          <div class="stat-label">Batches</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">9</div>
+          <div class="stat-label">Subjects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">13</div>
+          <div class="stat-label">Faculty</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">8</div>
+          <div class="stat-label">Rooms</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">45</div>
+          <div class="stat-label">Slots/Week</div>
+        </div>
+      </div>
 
-</form>
+      <div class="console-section">
+        <div class="console-header">
+          <div class="console-title">
+            <span>⬡</span> SCHEDULER OUTPUT
+          </div>
+          <button class="btn" style="font-size:11px;padding:4px 10px" onclick="clearConsole()">Clear</button>
+        </div>
+        <div class="console-body" id="console">
+          <div class="log-line info">// AI Timetable Scheduler — VIT SY 2025-26</div>
+          <div class="log-line info">// DFS + Backtracking CSP Engine ready</div>
+          <div class="log-line info">// Configure DATABASE_URL and click "Seed DB" to begin</div>
+        </div>
+      </div>
 
-<script src="script.js"></script>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;color:var(--text)">How It Works</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
+          <div>
+            <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:6px;font-weight:700">01 / EXPAND</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6">Sessions are expanded from subject hours — theory, lab (2 consecutive), tutorial per division</p>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:6px;font-weight:700">02 / SORT</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6">LAB sessions scheduled first (hardest), then tutorials, then theory — MRV heuristic</p>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:6px;font-weight:700">03 / DFS</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6">Depth First Search assigns (teacher, room, timeslot) to each session across all 7 divisions</p>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-bottom:6px;font-weight:700">04 / BACKTRACK</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.6">On constraint violation, algorithm backtracks and tries next valid combination</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- ── DIVISION TIMETABLE ── -->
+    <div id="page-division-tt" class="page">
+      <div class="page-header">
+        <h2>Division Timetable</h2>
+        <p>Full weekly schedule for a division (theory + lab overview)</p>
+      </div>
+      <div class="timetable-controls">
+        <select class="select-styled" id="div-select" onchange="loadDivisionTT()">
+          <option value="">Select Division…</option>
+          <option>A</option><option>B</option><option>C</option>
+          <option>D</option><option>E</option><option>F</option><option>SEDA</option>
+        </select>
+        <div id="div-legend" class="legend"></div>
+      </div>
+      <div id="div-tt-container"></div>
+    </div>
+
+    <!-- ── BATCH TIMETABLE ── -->
+    <div id="page-batch-tt" class="page">
+      <div class="page-header">
+        <h2>Batch Timetable</h2>
+        <p>Theory + Lab sessions for a specific batch</p>
+      </div>
+      <div class="timetable-controls">
+        <select class="select-styled" id="batch-div-select" onchange="loadBatchOptions()">
+          <option value="">Select Division…</option>
+          <option>A</option><option>B</option><option>C</option>
+          <option>D</option><option>E</option><option>F</option><option>SEDA</option>
+        </select>
+        <select class="select-styled" id="batch-select" onchange="loadBatchTT()">
+          <option value="">Select Batch…</option>
+        </select>
+      </div>
+      <div id="batch-tt-container"></div>
+    </div>
+
+    <!-- ── TEACHER TIMETABLE ── -->
+    <div id="page-teacher-tt" class="page">
+      <div class="page-header">
+        <h2>Teacher Timetable</h2>
+        <p>Weekly schedule for a faculty member</p>
+      </div>
+      <div class="timetable-controls">
+        <select class="select-styled" id="teacher-select" onchange="loadTeacherTT()">
+          <option value="">Select Teacher…</option>
+          <option>ASK</option><option>KS</option><option>RAA</option><option>VUR</option>
+          <option>VSB</option><option>ABK</option><option>GZZ</option><option>AGS</option>
+          <option>DAG</option><option>OSD</option><option>ACA</option><option>KG</option><option>VKS</option>
+        </select>
+      </div>
+      <div id="teacher-tt-container"></div>
+    </div>
+
+    <!-- ── ROOM TIMETABLE ── -->
+    <div id="page-room-tt" class="page">
+      <div class="page-header">
+        <h2>Room Schedule</h2>
+        <p>Occupancy view for a classroom or lab</p>
+      </div>
+      <div class="timetable-controls">
+        <select class="select-styled" id="room-select" onchange="loadRoomTT()">
+          <option value="">Select Room…</option>
+          <optgroup label="Theory Rooms">
+            <option>4307</option><option>4006</option><option>4005</option>
+          </optgroup>
+          <optgroup label="Lab Rooms">
+            <option>4304</option><option>4007</option><option>4008</option>
+            <option>4003</option><option>4105</option>
+          </optgroup>
+        </select>
+      </div>
+      <div id="room-tt-container"></div>
+    </div>
+
+    <!-- ── SYLLABUS ── -->
+    <div id="page-syllabus" class="page">
+      <div class="page-header">
+        <h2>AI Syllabus — ML2308</h2>
+        <p>Artificial Intelligence · SY CSE (AI&ML) · A.Y. 2025-26</p>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-header">
+          <span class="unit-badge">UNIT I</span>
+          <div>
+            <div class="unit-title">Fundamentals of Artificial Intelligence</div>
+            <div class="unit-hours">5 Hours</div>
+          </div>
+        </div>
+        <div class="unit-topics">
+          Introduction: A.I. Representation, Non-AI & AI Techniques, Knowledge Base Systems, State Space Search, Production Systems, Problem Characteristics, Types of production systems, Turing Test.<br>
+          Intelligent Agents: Agents and Environments, Rationality, Nature of Environments, Structure of Agents, Problem Solving Agents.<br>
+          Problem Formulation: Vacuum World, 8 Queens, Route Finding, Robot Navigation.
+        </div>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-header">
+          <span class="unit-badge">UNIT II</span>
+          <div>
+            <div class="unit-title">Uninformed Search Strategies</div>
+            <div class="unit-hours">5 Hours</div>
+          </div>
+        </div>
+        <div class="unit-topics">
+          Depth First Search, Breadth First Search, Depth Limited Search, Iterative Deepening DFS, Bidirectional Search, Comparison of Uninformed Search Strategies.
+        </div>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-header">
+          <span class="unit-badge">UNIT III</span>
+          <div>
+            <div class="unit-title">Informed Search Methods</div>
+            <div class="unit-hours">5 Hours</div>
+          </div>
+        </div>
+        <div class="unit-topics">
+          Generate & Test, Hill Climbing, Best First Search, A* and AO* Algorithm, Constraint Satisfaction, Means Ends Analysis.<br>
+          Game Playing: Minimax Search, Alpha-Beta Cutoffs, Quiescence Search.
+        </div>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-header">
+          <span class="unit-badge">UNIT IV</span>
+          <div>
+            <div class="unit-title">Logical Agents</div>
+            <div class="unit-hours">5 Hours</div>
+          </div>
+        </div>
+        <div class="unit-topics">
+          Knowledge Based Agents, Wumpus World.<br>
+          Propositional Logic: Representation, Inference, Reasoning Patterns, Resolution, Forward and Backward Chaining.<br>
+          First Order Logic: Representation, Inference, Reasoning Patterns, Resolution, Forward and Backward Chaining.
+        </div>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-header">
+          <span class="unit-badge">UNIT V</span>
+          <div>
+            <div class="unit-title">Basics of PROLOG</div>
+            <div class="unit-hours">4 Hours</div>
+          </div>
+        </div>
+        <div class="unit-topics">
+          Representation, Structure, Backtracking.<br>
+          Expert System: Design, Implementation, Case Study of Expert System in PROLOG.
+        </div>
+      </div>
+
+      <div class="unit-card">
+        <div class="unit-header">
+          <span class="unit-badge">UNIT VI</span>
+          <div>
+            <div class="unit-title">Planning</div>
+            <div class="unit-hours">4 Hours</div>
+          </div>
+        </div>
+        <div class="unit-topics">
+          Blocks World, STRIPS, Goal Stack Implementation.<br>
+          State Space Search: Forward, Backward, Heuristics.<br>
+          Partial Order Planning, Planning Graphs, Hierarchical Planning, Conditional Planning, Continuous Planning.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FACULTY ── -->
+    <div id="page-teachers-ref" class="page">
+      <div class="page-header">
+        <h2>Faculty Directory</h2>
+        <p>SY CSE (AI&ML) teaching staff</p>
+      </div>
+      <div class="teacher-grid" id="teacher-grid"></div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:8000';
+
+const DAYS_ORDER = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY'];
+const SLOT_TIMES = [800,900,1000,1100,1200,1300,1400,1500,1600];
+const SLOT_LABELS = {
+  800:'08:00',900:'09:00',1000:'10:00',1100:'11:00',
+  1200:'12:00',1300:'13:00',1400:'14:00',1500:'15:00',1600:'16:00',1700:'17:00'
+};
+
+const TEACHERS_DATA = [
+  {code:'ASK', name:'Mr. Ankesh Suresh Khare',      subjects:[{code:'AI',type:'theory'},{code:'RAAD',type:'theory'},{code:'DT',type:'tutorial'}]},
+  {code:'KS',  name:'Dr. Kailash Shaw',              subjects:[{code:'ADS',type:'theory'},{code:'ADS',type:'lab'}]},
+  {code:'RAA', name:'Rashmi Aniket Asole',           subjects:[{code:'ADS',type:'lab'}]},
+  {code:'VUR', name:'Dr. Vijay Uttam Rathod',        subjects:[{code:'POCACD',type:'theory'},{code:'POCACD',type:'lab'},{code:'DT',type:'tutorial'}]},
+  {code:'VSB', name:'Mrs. Vanita Sharad Babanne',    subjects:[{code:'AI',type:'lab'}]},
+  {code:'ABK', name:'Ms. Asmita Balasaheb Kalamkar', subjects:[{code:'FCTC',type:'theory'}]},
+  {code:'GZZ', name:'Ms. Geeta Balkrushna Zaware',   subjects:[{code:'OS',type:'lab'},{code:'DT',type:'tutorial'}]},
+  {code:'AGS', name:'Ms. Ashlesha Gopinath Sawant',  subjects:[{code:'OS',type:'theory'},{code:'OS',type:'lab'}]},
+  {code:'DAG', name:'Mrs. Dipti Ajitkumar Gaikwad',  subjects:[{code:'AI',type:'lab'},{code:'DV',type:'tutorial'}]},
+  {code:'OSD', name:'Omkar Shailendra Dubal',        subjects:[{code:'OS',type:'lab'}]},
+  {code:'ACA', name:'Dr. Amruta Chandrakant Amune',  subjects:[{code:'OS',type:'lab'}]},
+  {code:'KG',  name:'Dr. Kalyani Ghughe',            subjects:[{code:'DV',type:'theory'},{code:'DV',type:'tutorial'}]},
+  {code:'VKS', name:'Mr. Vivekanand Sharma',         subjects:[{code:'IOT',type:'theory'},{code:'IOT',type:'tutorial'}]},
+];
+
+// ── Navigation
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+
+  if (id === 'teachers-ref') renderTeacherGrid();
+}
+
+// ── Console
+function log(msg, type = 'info') {
+  const c = document.getElementById('console');
+  const d = document.createElement('div');
+  d.className = 'log-line ' + type;
+  const time = new Date().toLocaleTimeString('en-US', {hour12:false});
+  d.textContent = `[${time}] ${msg}`;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+function clearConsole() {
+  document.getElementById('console').innerHTML = '';
+}
+
+// ── Status badge
+function setStatus(state, text) {
+  const b = document.getElementById('status-badge');
+  b.className = 'status-badge ' + state;
+  b.innerHTML = `<span class="pulse"></span>${text}`;
+}
+
+// ── Toast
+function toast(msg, type = 'info') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ── Seed
+async function runSeed() {
+  setStatus('running', 'SEEDING');
+  log('Seeding database with SY subjects, teachers, rooms, timeslots…');
+  try {
+    const r = await fetch(`${API}/seed`, {method:'POST'});
+    const d = await r.json();
+    log('✓ ' + (d.message || JSON.stringify(d)), 'success');
+    setStatus('ready', 'READY');
+    toast('Database seeded successfully', 'success');
+  } catch(e) {
+    log('Error: ' + e.message, 'error');
+    setStatus('error', 'ERROR');
+    toast('Seed failed — is backend running?', 'error');
+  }
+}
+
+// ── Generate
+async function generateTimetable() {
+  const btn = document.getElementById('gen-btn');
+  btn.innerHTML = '<span class="spinner"></span> Running DFS…';
+  btn.disabled = true;
+  setStatus('running', 'RUNNING');
+  log('Starting DFS backtracking scheduler…');
+  log('Expanding sessions for 7 divisions × 9 subjects…');
+  log('Labs sorted first (MRV heuristic)…');
+  try {
+    const r = await fetch(`${API}/generate-timetable`, {method:'POST'});
+    const d = await r.json();
+    if (d.error) {
+      log('✗ ' + d.error, 'error');
+      setStatus('error', 'ERROR');
+      toast(d.error, 'error');
+    } else {
+      log('✓ ' + d.message, 'success');
+      log('All constraints satisfied — conflict-free timetable saved', 'success');
+      setStatus('ready', 'READY');
+      toast(d.message, 'success');
+    }
+  } catch(e) {
+    log('Error: ' + e.message, 'error');
+    setStatus('error', 'ERROR');
+    toast('Generation failed — is backend running?', 'error');
+  }
+  btn.innerHTML = '✦ Generate Timetable';
+  btn.disabled = false;
+}
+
+// ── Timetable rendering
+function buildTimetableGrid(entries) {
+  // Build map: day → startTime → entry
+  const grid = {};
+  DAYS_ORDER.forEach(d => { grid[d] = {}; });
+
+  entries.forEach(e => {
+    const day = e.timeslot?.day;
+    const st  = e.timeslot?.startTime;
+    if (!day || !st) return;
+    if (!grid[day]) grid[day] = {};
+    grid[day][st] = e;
+  });
+  return grid;
+}
+
+function entryTypeClass(e) {
+  return (e.lectureType || '').toLowerCase();
+}
+
+function renderCell(e) {
+  if (!e) return '<div class="cell-empty"></div>';
+  const cls = entryTypeClass(e);
+  const subj = e.subject?.code || e.subject?.name || '?';
+  const teacher = e.teacher?.shortCode || '';
+  const room = e.room?.roomNumber || '';
+  const batch = e.batch?.name ? `<br><span style="color:#7c3aed;font-size:9px">${e.batch.name}</span>` : '';
+  return `<div class="cell-entry ${cls}" title="${e.subject?.name || ''} — ${teacher} — ${room}">
+    <div class="cell-subject">${subj}</div>
+    <div class="cell-teacher">${teacher}</div>
+    <div class="cell-room">${room}</div>${batch}
+  </div>`;
+}
+
+function renderTimetableHTML(entries, title = '') {
+  if (!entries || entries.length === 0) {
+    return `<div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <h3>No entries found</h3>
+      <p>Generate a timetable first or select a valid option</p>
+    </div>`;
+  }
+
+  const grid = buildTimetableGrid(entries);
+
+  let html = `<div class="timetable-wrapper"><table class="tt"><thead><tr>
+    <th class="day-col">Day</th>`;
+  
+  SLOT_TIMES.forEach(st => {
+    const lbl = SLOT_LABELS[st] + '–' + SLOT_LABELS[st === 1600 ? 1700 : st + 100];
+    const isLunch = (st === 1200 || st === 1300);
+    html += `<th${isLunch ? ' style="color:#f59e0b"' : ''}>${lbl}</th>`;
+  });
+  html += `</tr></thead><tbody>`;
+
+  DAYS_ORDER.forEach(day => {
+    html += `<tr><td class="day-header-cell">${day.slice(0,3)}</td>`;
+    SLOT_TIMES.forEach(st => {
+      const isLunch = (st === 1200 || st === 1300);
+      const e = grid[day]?.[st];
+      if (isLunch && !e) {
+        html += `<td><div class="cell-entry lunch"><div class="cell-subject" style="color:#f59e0b">LUNCH</div></div></td>`;
+      } else {
+        html += `<td>${renderCell(e)}</td>`;
+      }
+    });
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  return html;
+}
+
+// ── Division TT
+async function loadDivisionTT() {
+  const div = document.getElementById('div-select').value;
+  if (!div) return;
+  const c = document.getElementById('div-tt-container');
+  c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
+  try {
+    const r = await fetch(`${API}/timetable/division/${div}`);
+    const entries = await r.json();
+    c.innerHTML = renderTimetableHTML(entries);
+  } catch(e) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>${e.message}</p></div>`;
+  }
+}
+
+// ── Batch options
+async function loadBatchOptions() {
+  const div = document.getElementById('batch-div-select').value;
+  const sel = document.getElementById('batch-select');
+  sel.innerHTML = '<option value="">Select Batch…</option>';
+  if (!div) return;
+  try {
+    const r = await fetch(`${API}/batches/${div}`);
+    const batches = await r.json();
+    batches.forEach(b => {
+      sel.innerHTML += `<option>${b.name}</option>`;
+    });
+  } catch(e) {
+    ['B1','B2','B3'].forEach(n => {
+      sel.innerHTML += `<option>${div}-${n}</option>`;
+    });
+  }
+}
+
+// ── Batch TT
+async function loadBatchTT() {
+  const batch = document.getElementById('batch-select').value;
+  if (!batch) return;
+  const c = document.getElementById('batch-tt-container');
+  c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
+  try {
+    const r = await fetch(`${API}/timetable/batch/${encodeURIComponent(batch)}`);
+    const entries = await r.json();
+    c.innerHTML = renderTimetableHTML(entries);
+  } catch(e) {
+    c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
+  }
+}
+
+// ── Teacher TT
+async function loadTeacherTT() {
+  const code = document.getElementById('teacher-select').value;
+  if (!code) return;
+  const c = document.getElementById('teacher-tt-container');
+  c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
+  try {
+    const r = await fetch(`${API}/timetable/teacher/${code}`);
+    const entries = await r.json();
+    c.innerHTML = renderTimetableHTML(entries);
+  } catch(e) {
+    c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
+  }
+}
+
+// ── Room TT
+async function loadRoomTT() {
+  const room = document.getElementById('room-select').value;
+  if (!room) return;
+  const c = document.getElementById('room-tt-container');
+  c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
+  try {
+    const r = await fetch(`${API}/timetable/room/${room}`);
+    const entries = await r.json();
+    c.innerHTML = renderTimetableHTML(entries);
+  } catch(e) {
+    c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
+  }
+}
+
+// ── Teacher Grid
+function renderTeacherGrid() {
+  const grid = document.getElementById('teacher-grid');
+  grid.innerHTML = TEACHERS_DATA.map(t => `
+    <div class="teacher-card">
+      <div class="teacher-code">${t.code}</div>
+      <div class="teacher-name">${t.name}</div>
+      <div class="teacher-subjects">
+        ${t.subjects.map(s => `<span class="subject-tag ${s.type}">${s.code} ${s.type}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+</script>
 </body>
 </html>

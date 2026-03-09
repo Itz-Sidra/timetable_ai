@@ -1,10 +1,28 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.database.prisma import db
 from app.services.scheduler import generate_timetable
 from app.routes.timetable import router as timetable_router
+from app.routes.teachers import router as teachers_router
+from app.routes.rooms import router as rooms_router
+from app.routes.subjects import router as subjects_router
+from app.routes.timeslots import router as timeslots_router
+from app.database.seed import seed
 
-app = FastAPI()
+app = FastAPI(title="AI Timetable Generator")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(timetable_router)
+app.include_router(teachers_router)
+app.include_router(rooms_router)
+app.include_router(subjects_router)
+app.include_router(timeslots_router)
 
 
 @app.on_event("startup")
@@ -17,120 +35,127 @@ async def shutdown():
     await db.disconnect()
 
 
+@app.post("/seed")
+async def run_seed():
+    await seed()
+    return {"message": "Database seeded"}
+
+
 @app.post("/generate-timetable")
 async def generate():
+    year = await db.year.find_first(where={"name": "SY"})
+    if not year:
+        return {"error": "Run /seed first"}
 
-    # ------------------------------------------------------------------ load
-    teachers = await db.teacher.find_many()
-    subjects = await db.subject.find_many()
-    rooms    = await db.room.find_many()
-    slots    = await db.timeslot.find_many()
-    batches  = await db.batch.find_many(where={"divisionId": 1})
+    teachers            = await db.teacher.find_many()
+    subjects            = await db.subject.find_many(where={"yearId": year.id})
+    rooms               = await db.room.find_many()
+    slots               = await db.timeslot.find_many(order=[{"day": "asc"}, {"startTime": "asc"}])
+    divisions           = await db.division.find_many(where={"yearId": year.id})
+    batches             = await db.batch.find_many()
+    teacher_assignments = await db.teachersubject.find_many()
 
     data = {
-        "teachers":  teachers,
-        "subjects":  subjects,
-        "rooms":     rooms,
-        "timeslots": slots,
-        "batches":   batches,
+        "teachers":            teachers,
+        "subjects":            subjects,
+        "rooms":               rooms,
+        "timeslots":           slots,
+        "divisions":           divisions,
+        "batches":             batches,
+        "teacher_assignments": teacher_assignments,
     }
 
-    state = generate_timetable(data)
+    sessions = generate_timetable(data)
 
-    if state is None:
-        return {"error": "No valid timetable found — add more rooms or timeslots"}
+    if sessions is None:
+        return {"error": "No valid timetable found — constraints too tight"}
 
-    # ---------------------------------------------------------------- clear
+    # Clear old entries
     await db.timetableentry.delete_many()
 
-    # ------------------------------------------------- lookup maps
-    subject_map = {s.name: s for s in subjects}
-    teacher_map = {t.name: t for t in teachers}
+    # Build lookup maps
+    subject_map = {s.code: s for s in subjects}
     room_map    = {r.roomNumber: r for r in rooms}
+    batches_by_div = {}
+    for b in batches:
+        batches_by_div.setdefault(b.divisionId, []).append(b)
 
-    # Dedup guards — mirror the DB unique constraints in memory so we never
-    # attempt a duplicate insert.
-    used_teacher_slot: set[tuple] = set()
-    used_room_slot:    set[tuple] = set()
+    saved  = 0
+    errors = 0
 
-    # ---------------------------------------------------------- save
-    # state is a flat list of Session objects.
-    # - THEORY / TUTORIAL sessions: have teacher, room, timeslot set.
-    # - LAB original sessions:       have batch_assignments set (non-empty list).
-    # - LAB sentinel sessions:       batch_assignments == [] — skip entirely.
-
-    for s in state:
-
-        # ---------------------------------------- skip LAB sentinels
-        if s.lecture_type == "LAB" and not s.batch_assignments:
+    for s in sessions:
+        subj = subject_map.get(s.subject_code)
+        if not subj:
             continue
 
-        subject = subject_map.get(s.subject)
-        if not subject:
-            continue
+        # ── THEORY (division-wide, no batch)
+        if s.lecture_type == "THEORY":
+            if not s.teacher_id or not s.room_id or not s.timeslot:
+                continue
+            try:
+                await db.timetableentry.create(data={
+                    "divisionId":  s.division_id,
+                    "subjectId":   subj.id,
+                    "teacherId":   s.teacher_id,
+                    "roomId":      s.room_id,
+                    "timeslotId":  s.timeslot,
+                    "lectureType": "THEORY",
+                })
+                saved += 1
+            except Exception as e:
+                errors += 1
+                print(f"Skip THEORY {s.subject_code}: {e}")
 
-        # ---------------------------------------- THEORY / TUTORIAL
-        if s.lecture_type in ("THEORY", "TUTORIAL"):
+        # ── TUTORIAL (batch-specific)
+        elif s.lecture_type == "TUTORIAL":
+            if not s.teacher_id or not s.room_id or not s.timeslot:
+                continue
+            batch_id = getattr(s, "_batch_id", None)
+            try:
+                await db.timetableentry.create(data={
+                    "divisionId":  s.division_id,
+                    "batchId":     batch_id,
+                    "subjectId":   subj.id,
+                    "teacherId":   s.teacher_id,
+                    "roomId":      s.room_id,
+                    "timeslotId":  s.timeslot,
+                    "lectureType": "TUTORIAL",
+                })
+                saved += 1
+            except Exception as e:
+                errors += 1
+                print(f"Skip TUTORIAL {s.subject_code}: {e}")
 
-            teacher = teacher_map.get(s.teacher)
-            room    = room_map.get(s.room)
-            if not teacher or not room:
+        # ── LAB (per-batch single assignment)
+        elif s.lecture_type == "LAB" and s.batch_assignments:
+            div_batches = batches_by_div.get(s.division_id, [])
+            batch_idx   = getattr(s, "batch_index", 0)
+            batch       = div_batches[batch_idx] if batch_idx < len(div_batches) else None
+            if not batch:
+                print(f"Skip LAB {s.subject_code}: no batch at index {batch_idx}")
                 continue
 
-            key_t = (teacher.id, s.timeslot)
-            key_r = (room.id,    s.timeslot)
-            if key_t in used_teacher_slot or key_r in used_room_slot:
-                continue   # duplicate guard
+            bc   = s.batch_assignments[0]
+            room = room_map.get(bc["room"])
+            if not room:
+                print(f"Skip LAB {s.subject_code}: room {bc['room']} not found")
+                continue
 
-            await db.timetableentry.create(
-                data={
-                    "divisionId":  1,
-                    "batchId":     None,          # division-wide, no batch
-                    "subjectId":   subject.id,
-                    "teacherId":   teacher.id,
-                    "roomId":      room.id,
-                    "timeslotId":  s.timeslot,
-                    "lectureType": s.lecture_type,
-                }
-            )
-            used_teacher_slot.add(key_t)
-            used_room_slot.add(key_r)
+            for slot_id in (bc["slot_id"], bc["next_slot_id"]):
+                try:
+                    await db.timetableentry.create(data={
+                        "divisionId":  s.division_id,
+                        "batchId":     batch.id,
+                        "subjectId":   subj.id,
+                        "teacherId":   bc["teacher_id"],
+                        "roomId":      room.id,
+                        "timeslotId":  slot_id,
+                        "lectureType": "LAB",
+                    })
+                    saved += 1
+                except Exception as e:
+                    errors += 1
+                    print(f"Skip LAB slot {s.subject_code}: {e}")
 
-        # ---------------------------------------- LAB (original session)
-        elif s.lecture_type == "LAB":
-
-            # batch_assignments is a list with one entry per batch:
-            # { teacher, room, slot_id, next_slot_id, slot_day }
-            for i, bc in enumerate(s.batch_assignments):
-
-                teacher = teacher_map.get(bc["teacher"])
-                room    = room_map.get(bc["room"])
-                batch   = batches[i] if i < len(batches) else None
-
-                if not teacher or not room or not batch:
-                    continue
-
-                # Insert one row per consecutive slot for this batch
-                for slot_id in (bc["slot_id"], bc["next_slot_id"]):
-
-                    key_t = (teacher.id, slot_id)
-                    key_r = (room.id,    slot_id)
-
-                    if key_t in used_teacher_slot or key_r in used_room_slot:
-                        continue   # should never happen with a correct scheduler
-
-                    await db.timetableentry.create(
-                        data={
-                            "divisionId":  1,
-                            "batchId":     batch.id,   # ← batch-specific
-                            "subjectId":   subject.id,
-                            "teacherId":   teacher.id,
-                            "roomId":      room.id,
-                            "timeslotId":  slot_id,
-                            "lectureType": "LAB",
-                        }
-                    )
-                    used_teacher_slot.add(key_t)
-                    used_room_slot.add(key_r)
-
-    return {"message": "Timetable generated and saved"}
+    print(f"  Saved: {saved}  Errors: {errors}")
+    return {"message": f"Timetable generated — {saved} entries saved ({errors} skipped)"}
