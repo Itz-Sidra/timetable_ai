@@ -1,5 +1,5 @@
 """
-Seed — Division A only, 3 batches. Correct teacher-subject mapping from PDF.
+Seed — Division A, 3 batches. Exact teacher mapping from PDF.
 """
 import asyncio
 from app.database.prisma import db
@@ -20,7 +20,6 @@ TEACHERS = [
     {"name": "MR. VIVEKANAND SHARMA",          "shortCode": "VKS"},
 ]
 
-# (name, code, theoryHours, labHours, tutHours, is_elective)
 SUBJECTS = [
     ("ARTIFICIAL INTELLIGENCE",             "AI",     2, 2, 0, False),
     ("OPERATING SYSTEM",                    "OS",     2, 2, 0, False),
@@ -28,12 +27,12 @@ SUBJECTS = [
     ("AUTOMATA THEORY AND COMPILER DESIGN", "POCACD", 2, 2, 0, False),
     ("REASONING AND APTITUDE DEVELOPMENT",  "RAAD",   1, 0, 0, False),
     ("FROM CAMPUS TO CORPORATE",            "FCTC",   1, 0, 0, False),
-    ("DESIGN THINKING",                     "DT",     0, 0, 1, False),  # tutorial only
+    ("DESIGN THINKING",                     "DT",     0, 0, 1, False),
     ("DATA VISUALIZATION",                  "DV",     2, 0, 1, True),
     ("INTERNET OF THINGS",                  "IOT",    2, 0, 1, True),
 ]
 
-# Exact mapping from PDF — each entry is (teacher, subject, lecture_type)
+# Exact mapping from PDF — only these teachers, only these subjects
 TEACHER_SUBJECTS = [
     # Theory
     ("ASK", "AI",     "THEORY"),
@@ -44,47 +43,33 @@ TEACHER_SUBJECTS = [
     ("AGS", "OS",     "THEORY"),
     ("KG",  "DV",     "THEORY"),
     ("VKS", "IOT",    "THEORY"),
-    # Labs — 3 teachers per subject (one per batch)
+    # Labs — exactly as listed (only these teachers do labs)
     ("KS",  "ADS",    "LAB"),
-    ("RAA", "ADS",    "LAB"),   # 3rd ADS lab teacher
-    ("GZZ", "ADS",    "LAB"),
+    ("RAA", "ADS",    "LAB"),
     ("VUR", "POCACD", "LAB"),
-    ("AGS", "POCACD", "LAB"),   # extra POCACD lab
-    ("VSB", "POCACD", "LAB"),
     ("VSB", "AI",     "LAB"),
     ("DAG", "AI",     "LAB"),
-    ("ACA", "AI",     "LAB"),   # ACA does AI lab too
     ("GZZ", "OS",     "LAB"),
     ("AGS", "OS",     "LAB"),
     ("OSD", "OS",     "LAB"),
     ("ACA", "OS",     "LAB"),
-    # Tutorials — DT has 3 teachers (one per batch)
+    # Tutorials
     ("VUR", "DT",     "TUTORIAL"),
     ("GZZ", "DT",     "TUTORIAL"),
     ("ASK", "DT",     "TUTORIAL"),
-    # DV tutorial — 2 teachers (div-wide, pick one)
     ("KG",  "DV",     "TUTORIAL"),
     ("DAG", "DV",     "TUTORIAL"),
-    # IOT tutorial
     ("VKS", "IOT",    "TUTORIAL"),
 ]
 
 THEORY_ROOMS = ["4307", "4006", "4005"]
 LAB_ROOMS    = ["4304", "4007", "4008", "4003", "4105"]
 DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
-# Single 1-hour lunch at 13:00-14:00 (remove the 12:00-13:00 lunch slot)
 SLOTS = [
-    (800,  900),
-    (900,  1000),
-    (1000, 1100),
-    (1100, 1200),
-    (1200, 1300),
-    (1300, 1400),  # ← LUNCH (only this one)
-    (1400, 1500),
-    (1500, 1600),
-    (1600, 1700),
+    (800,  900), (900,  1000), (1000, 1100), (1100, 1200),
+    (1200, 1300), (1300, 1400),
+    (1400, 1500), (1500, 1600), (1600, 1700),
 ]
-LUNCH_SLOT = 1300   # only 13:00 is lunch
 
 
 async def seed():
@@ -102,7 +87,6 @@ async def seed():
 
     year = await db.year.create(data={"name": "SY"})
     eg   = await db.electivegroup.create(data={"name": "DV_IOT"})
-    print(f"  Year: {year.id}  ElectiveGroup: {eg.id}")
 
     teacher_map = {}
     for t in TEACHERS:
@@ -121,18 +105,15 @@ async def seed():
         subject_map[code] = obj
     print(f"  Subjects: {len(subject_map)}")
 
-    ok = 0
     for (tc, sc, lt) in TEACHER_SUBJECTS:
         if tc not in teacher_map or sc not in subject_map:
-            print(f"  [skip] {tc}/{sc}/{lt}")
             continue
         await db.teachersubject.create(data={
             "lectureType": lt,
             "teacher": {"connect": {"id": teacher_map[tc].id}},
             "subject": {"connect": {"id": subject_map[sc].id}},
         })
-        ok += 1
-    print(f"  TeacherSubjects: {ok}")
+    print(f"  TeacherSubjects: {len(TEACHER_SUBJECTS)}")
 
     for r in THEORY_ROOMS:
         await db.room.create(data={"roomNumber": r, "roomType": "THEORY"})
@@ -146,11 +127,9 @@ async def seed():
     print(f"  Timeslots: {len(DAYS)*len(SLOTS)}")
 
     div = await db.division.create(data={"name": "A", "year": {"connect": {"id": year.id}}})
-    batches = []
     for n in [1, 2, 3]:
-        b = await db.batch.create(data={"name": f"A-B{n}", "division": {"connect": {"id": div.id}}})
-        batches.append(b)
-    print(f"  Division A  Batches: {len(batches)}")
+        await db.batch.create(data={"name": f"A-B{n}", "division": {"connect": {"id": div.id}}})
+    print(f"  Division A  Batches: 3")
     print("✅ Seed complete")
 
 
