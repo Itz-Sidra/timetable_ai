@@ -70,7 +70,6 @@ async def generate():
     if sessions is None:
         return {"error": "No valid timetable found — constraints too tight"}
 
-    # Reconnect after long DFS (Neon drops idle connections)
     print("Reconnecting to DB before save...", flush=True)
     try:
         await db.disconnect()
@@ -78,10 +77,8 @@ async def generate():
         pass
     await db.connect()
 
-    # Clear old entries
     await db.timetableentry.delete_many()
 
-    # Build lookup maps
     subject_map = {s.code: s for s in subjects}
     room_map    = {r.roomNumber: r for r in rooms}
     batches_by_div = {}
@@ -96,7 +93,6 @@ async def generate():
         if not subj:
             continue
 
-        # ── THEORY (division-wide, no batch)
         if s.lecture_type == "THEORY":
             if not s.teacher_id or not s.room_id or not s.timeslot:
                 continue
@@ -114,7 +110,6 @@ async def generate():
                 errors += 1
                 print(f"Skip THEORY {s.subject_code}: {e}")
 
-        # ── TUTORIAL (all are per-batch: DT and DV)
         elif s.lecture_type == "TUTORIAL":
             if not s.teacher_id or not s.room_id or not s.timeslot:
                 continue
@@ -139,7 +134,6 @@ async def generate():
                 errors += 1
                 print(f"Skip TUTORIAL {s.subject_code}: {e}")
 
-        # ── LAB (per-batch single assignment)
         elif s.lecture_type == "LAB" and s.batch_assignments:
             div_batches = batches_by_div.get(s.division_id, [])
             batch_idx   = getattr(s, "batch_index", 0)

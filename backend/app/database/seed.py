@@ -1,6 +1,3 @@
-"""
-Seed — Division A, 3 batches. Exact teacher mapping from PDF.
-"""
 import asyncio
 from app.database.prisma import db
 
@@ -32,7 +29,7 @@ SUBJECTS = [
     ("INTERNET OF THINGS",                  "IOT",    2, 0, 1, True),
 ]
 
-# Exact mapping from PDF — only these teachers, only these subjects
+# Teacher mapping with there subjects and lecture types
 TEACHER_SUBJECTS = [
     # Theory
     ("ASK", "AI",     "THEORY"),
@@ -43,7 +40,7 @@ TEACHER_SUBJECTS = [
     ("AGS", "OS",     "THEORY"),
     ("KG",  "DV",     "THEORY"),
     ("VKS", "IOT",    "THEORY"),
-    # Labs — exactly as listed (only these teachers do labs)
+    # Labs 
     ("KS",  "ADS",    "LAB"),
     ("RAA", "ADS",    "LAB"),
     ("VUR", "POCACD", "LAB"),

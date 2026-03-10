@@ -1,6 +1,4 @@
 """
-Hybrid scheduler — labs independent per batch.
-
 Each batch gets labs on different days (rotating):
   B1: ADS-Mon, POCACD-Tue, AI-Wed, OS-Thu
   B2: POCACD-Mon, AI-Tue, OS-Wed, ADS-Thu
@@ -17,9 +15,7 @@ LAB_START  = 800
 LAB_SUBJECTS = ["ADS", "POCACD", "AI", "OS"]
 DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
 
-# Each batch gets a different lab each day (rotation)
 BATCH_LAB_ROTATION = {
-    # batch_index: {day: lab_subject}
     0: {"MONDAY": "ADS",    "TUESDAY": "POCACD", "WEDNESDAY": "AI",  "THURSDAY": "OS"},
     1: {"MONDAY": "POCACD", "TUESDAY": "AI",     "WEDNESDAY": "OS",  "THURSDAY": "ADS"},
     2: {"MONDAY": "AI",     "TUESDAY": "OS",     "WEDNESDAY": "ADS", "THURSDAY": "POCACD"},
@@ -30,7 +26,6 @@ def expand_sessions(subjects, division, batches):
     subj = {s.code: s for s in subjects}
     sessions = []
 
-    # Theory
     for code in ["AI", "OS", "ADS", "POCACD", "RAAD", "FCTC", "DV"]:
         s = subj.get(code)
         if not s or s.theoryHours == 0:
@@ -40,7 +35,6 @@ def expand_sessions(subjects, division, batches):
                 division_id=division.id,
                 elective_group_id=getattr(s, 'electiveGroupId', None)))
 
-    # Labs — each batch gets 4 labs on fixed days per rotation
     for bidx, batch in enumerate(batches):
         rotation = BATCH_LAB_ROTATION[bidx]
         for day, lab_code in rotation.items():
@@ -50,10 +44,9 @@ def expand_sessions(subjects, division, batches):
             sess = Session(s.code, s.name, "LAB", 2,
                 division_id=division.id, elective_group_id=None)
             sess.batch_index = bidx
-            sess.assigned_day = day   # fixed day for this lab
+            sess.assigned_day = day
             sessions.append(sess)
 
-    # DT tutorial: per batch
     dt = subj.get("DT")
     if dt and dt.tutHours > 0:
         for bidx in range(len(batches)):
@@ -62,8 +55,7 @@ def expand_sessions(subjects, division, batches):
             sess.batch_index = bidx
             sess.tut_subj = "DT"
             sessions.append(sess)
-
-    # DV tutorial: per batch
+            
     dv = subj.get("DV")
     if dv and dv.tutHours > 0:
         for bidx in range(len(batches)):
@@ -94,7 +86,6 @@ def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
     room_slot    = set()
     batch_slot   = set()
 
-    # ── Assign labs: each batch has a fixed day per subject ──
     for sess in lab_sessions:
         bidx  = sess.batch_index
         batch = batches[bidx]
@@ -105,7 +96,7 @@ def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
         assigned = False
         for slot in day_slots:
             if slot.startTime < LAB_START or slot.startTime >= 1000:
-                continue  # only 08:00-10:00
+                continue  
             nslot = nxt(slot, slots_by_day)
             if not nslot or nslot.startTime >= 1000:
                 continue
@@ -135,9 +126,8 @@ def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
             if assigned: break
 
         if not assigned:
-            print(f"  ⚠️  LAB {sess.subject_code} B{bidx+1} on {day} unassigned", flush=True)
+            print(f"   LAB {sess.subject_code} B{bidx+1} on {day} unassigned", flush=True)
 
-    # ── Tutorials: 12:00 slots on Mon-Thu, or Fri afternoon ──
     tut_slots = []
     for day in DAYS:
         for slot in slots_by_day.get(day, []):
@@ -171,7 +161,7 @@ def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
                 if assigned: break
             if assigned: break
         if not assigned:
-            print(f"  ⚠️  TUT {sess.tut_subj} B{bidx+1} unassigned", flush=True)
+            print(f"  TUT {sess.tut_subj} B{bidx+1} unassigned", flush=True)
 
     return True, teacher_slot, room_slot
 
@@ -185,7 +175,6 @@ def assign_theory(theory_sessions, batches, ts_map, t_rooms, slots_by_day,
     div_day_count = {}
     room_count    = {}
 
-    # Theory slots: 10:00-12:00 Mon-Thu (2 per day), all slots Fri
     allowed = {}
     for day in ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY"]:
         allowed[day] = [s for s in slots_by_day.get(day, [])
@@ -229,7 +218,7 @@ def assign_theory(theory_sessions, batches, ts_map, t_rooms, slots_by_day,
                 if assigned: break
             if assigned: break
         if not assigned:
-            print(f"  ⚠️  THEORY {sess.subject_code} unassigned", flush=True)
+            print(f"  THEORY {sess.subject_code} unassigned", flush=True)
 
 
 def generate_timetable(data):
@@ -281,5 +270,5 @@ def generate_timetable(data):
     assign_theory(theory_sessions, batches, ts_map, t_rooms,
                   slots_by_day, used_t, used_r)
 
-    print(f"  ✅ All {len(all_sessions)} sessions scheduled", flush=True)
+    print(f" All {len(all_sessions)} sessions scheduled", flush=True)
     return all_sessions

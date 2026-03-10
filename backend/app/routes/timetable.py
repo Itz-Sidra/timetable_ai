@@ -49,7 +49,7 @@ async def batch_timetable(batch: str):
     b = await db.batch.find_first(where={"name": batch})
     if not b:
         return {"error": "Batch not found"}
-    # Division-wide theory (batchId IS NULL)
+    
     div_entries = await db.timetableentry.find_many(
         where={
             "divisionId": b.divisionId,
@@ -58,12 +58,12 @@ async def batch_timetable(batch: str):
         },
         include=INCLUDE_ALL
     )
-    # This batch's lab sessions
+    
     lab_entries = await db.timetableentry.find_many(
         where={"batchId": b.id},
         include=INCLUDE_ALL
     )
-    # Division-wide tutorials (batchId IS NULL)
+    
     tut_entries = await db.timetableentry.find_many(
         where={
             "divisionId": b.divisionId,
