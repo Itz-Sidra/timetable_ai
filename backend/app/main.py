@@ -59,6 +59,8 @@ async def generate():
     if not divisions:
         return {"error": "No divisions found — run /seed first"}
 
+    await db.timetableentry.delete_many()
+
     data = {
         "teachers":            teachers,
         "subjects":            subjects,
@@ -74,14 +76,6 @@ async def generate():
     if sessions is None:
         return {"error": "No valid timetable found — add teachers, subjects, and rooms first"}
 
-    print("Reconnecting to DB before save...", flush=True)
-    try:
-        await db.disconnect()
-    except Exception:
-        pass
-    await db.connect()
-
-    await db.timetableentry.delete_many()
 
     subject_map = {s.code: s for s in subjects}
     room_map    = {r.roomNumber: r for r in rooms}

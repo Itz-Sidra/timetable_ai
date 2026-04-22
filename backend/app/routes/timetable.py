@@ -11,6 +11,13 @@ INCLUDE_ALL = {
     "batch":   True,
 }
 
+@router.get("/divisions/all")
+async def get_all_divisions():
+    return await db.division.find_many(
+        include={"year": True},
+        order=[{"year": {"name": "asc"}}, {"name": "asc"}]
+    )
+
 @router.get("/timetable/teacher/{code}")
 async def teacher_timetable(code: str):
     teacher = await db.teacher.find_first(where={"shortCode": code})
