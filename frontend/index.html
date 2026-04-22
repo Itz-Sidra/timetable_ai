@@ -214,9 +214,23 @@
   .legend-dot.lab      { background: var(--lab-border); }
   .legend-dot.tutorial { background: var(--tutorial-border); }
 
+  /* ── FACULTY CARDS ── */
   .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; margin-bottom: 24px; }
-  .teacher-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 16px 18px; cursor: pointer; transition: all .18s; }
+
+  .teacher-card {
+    background: var(--card);
+    border: 1.5px solid var(--border-light);
+    border-radius: 12px;
+    padding: 16px 18px 12px;
+    transition: all .18s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
   .teacher-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(74,127,212,0.1); transform: translateY(-1px); }
+
+  .teacher-card-top { cursor: pointer; }
   .teacher-code { font-family: var(--font); font-size: 22px; font-weight: 800; color: var(--accent); margin-bottom: 2px; letter-spacing: -0.5px; }
   .teacher-name { font-size: 12.5px; color: var(--muted); font-weight: 600; }
   .teacher-subjects { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
@@ -224,6 +238,102 @@
   .subject-tag.theory   { border-color: var(--theory-border); color: var(--theory-text); background: var(--theory-bg); }
   .subject-tag.lab      { border-color: var(--lab-border); color: var(--lab-text); background: var(--lab-bg); }
   .subject-tag.tutorial { border-color: var(--tutorial-border); color: var(--tutorial-text); background: var(--tutorial-bg); }
+
+  /* card action bar */
+  .card-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-light);
+  }
+  .card-btn {
+    flex: 1;
+    padding: 6px 10px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: var(--font);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .14s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .card-btn.edit:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .card-btn.delete:hover { border-color: #e05252; color: #c0392b; background: #fde8e8; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(28,32,58,0.45);
+    backdrop-filter: blur(3px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal-box {
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    width: 520px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(28,32,58,0.22);
+    transform: translateY(16px) scale(0.98);
+    transition: transform .22s cubic-bezier(.34,1.26,.64,1);
+    padding: 28px 30px;
+  }
+  .modal-overlay.open .modal-box { transform: none; }
+
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .modal-title { font-family: var(--font); font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: var(--surface);
+    color: var(--muted); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .14s; font-family: var(--font); font-weight: 700;
+  }
+  .modal-close:hover { border-color: #e05252; color: #c0392b; background: #fde8e8; }
+
+  .modal-section-label {
+    font-family: var(--font); font-size: 10.5px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--muted-light); margin: 18px 0 8px;
+  }
+  .modal-section-label:first-of-type { margin-top: 0; }
+
+  .modal-footer { display: flex; gap: 8px; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-light); }
+
+  /* confirm delete dialog */
+  .confirm-box {
+    background: var(--surface);
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    padding: 28px 26px;
+    box-shadow: 0 20px 60px rgba(28,32,58,0.22);
+    transform: translateY(16px) scale(0.98);
+    transition: transform .22s cubic-bezier(.34,1.26,.64,1);
+    text-align: center;
+  }
+  .modal-overlay.open .confirm-box { transform: none; }
+  .confirm-icon { font-size: 32px; margin-bottom: 12px; }
+  .confirm-title { font-family: var(--font); font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+  .confirm-desc { font-size: 12.5px; color: var(--muted); font-weight: 600; line-height: 1.6; margin-bottom: 22px; }
+  .confirm-actions { display: flex; gap: 8px; justify-content: center; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); background: var(--card); border-radius: 12px; border: 1.5px dashed var(--border); }
   .empty-state .empty-icon { font-size: 40px; margin-bottom: 14px; }
@@ -444,8 +554,6 @@
         <h2>Add Year</h2>
         <p>Register an academic year (e.g. SY, TY, FY) before adding subjects</p>
       </div>
-
-      <!-- Existing years list -->
       <div style="margin-bottom:20px;">
         <div style="font-family:var(--font);font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Existing Years</div>
         <div class="year-grid" id="year-list">
@@ -454,9 +562,7 @@
           </div>
         </div>
       </div>
-
       <div class="form-card">
-        <!-- Quick-pick buttons -->
         <div class="form-group">
           <label class="form-label">Quick Pick</label>
           <div class="checkbox-group">
@@ -466,12 +572,10 @@
           </div>
           <div class="form-hint">Click to pre-fill the field below, or type a custom name.</div>
         </div>
-
         <div class="form-group">
           <label class="form-label" for="y-name">Year Name</label>
           <input class="form-input" id="y-name" type="text" placeholder="e.g. SY, TY, FY" maxlength="20" autocomplete="off">
         </div>
-
         <div class="form-actions">
           <button class="btn btn-success" id="add-year-btn" onclick="submitAddYear()">✓ Add Year</button>
           <button class="btn" onclick="document.getElementById('y-name').value='';document.getElementById('add-year-status').textContent=''">Clear</button>
@@ -561,8 +665,6 @@
           <input class="form-input" id="s-code" type="text" placeholder="e.g. ML" maxlength="10" autocomplete="off">
           <div class="form-hint">Unique short code shown in timetable cells.</div>
         </div>
-
-        <!-- ★ NEW: Year selector -->
         <div class="form-group">
           <label class="form-label" for="s-year">Academic Year</label>
           <select class="form-select" id="s-year">
@@ -570,7 +672,6 @@
           </select>
           <div class="form-hint">Which year this subject belongs to. <a href="#" onclick="showPage('add-year', document.querySelector('.sidebar-item[onclick*=add-year]'));return false;" style="color:var(--accent);font-weight:700;">+ Add a new year</a></div>
         </div>
-
         <div class="form-divider"></div>
         <div class="form-group">
           <label class="form-label">Lecture Components</label>
@@ -602,6 +703,68 @@
 
 <div id="toast-container"></div>
 
+<!-- ── EDIT TEACHER MODAL ── -->
+<div class="modal-overlay" id="edit-modal" onclick="handleModalBackdropClick(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">✎ Edit Teacher</div>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+
+    <input type="hidden" id="edit-teacher-id">
+
+    <div class="modal-section-label">Basic Info</div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label" for="edit-t-name">Full Name</label>
+      <input class="form-input" id="edit-t-name" type="text" placeholder="e.g. MR. JOHN DOE" autocomplete="off">
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label class="form-label" for="edit-t-code">Short Code</label>
+      <input class="form-input" id="edit-t-code" type="text" maxlength="6" autocomplete="off">
+      <div class="form-hint">Changing the code will affect all timetable references.</div>
+    </div>
+
+    <div class="modal-section-label">Add More Assignments</div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;">
+      Select subjects + lecture types below to <strong>add</strong> new assignments. Existing ones are preserved.
+    </div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">Subjects</label>
+      <div class="multi-select-container" id="edit-subjects-list" style="max-height:130px;"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label class="form-label">Lecture Types</label>
+      <div class="checkbox-group" id="edit-lecture-types">
+        <label class="checkbox-item" id="edit-ltype-THEORY"><input type="checkbox" value="THEORY"> Theory</label>
+        <label class="checkbox-item" id="edit-ltype-LAB"><input type="checkbox" value="LAB"> Lab</label>
+        <label class="checkbox-item" id="edit-ltype-TUTORIAL"><input type="checkbox" value="TUTORIAL"> Tutorial</label>
+      </div>
+    </div>
+
+    <div class="modal-section-label">Current Assignments</div>
+    <div id="edit-current-assignments" style="display:flex;flex-wrap:wrap;gap:6px;min-height:28px;"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-success" id="edit-save-btn" onclick="submitEditTeacher()">✓ Save Changes</button>
+      <button class="btn" onclick="closeEditModal()">Cancel</button>
+      <span id="edit-status" style="font-size:12px;color:var(--muted);font-weight:600;margin-left:4px;"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ── DELETE CONFIRM MODAL ── -->
+<div class="modal-overlay" id="delete-modal" onclick="handleDeleteBackdropClick(event)">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <div class="confirm-title" id="confirm-title">Delete Teacher?</div>
+    <div class="confirm-desc" id="confirm-desc">This will permanently remove the teacher and all their timetable entries. This cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="btn btn-outline-danger" id="confirm-delete-btn" onclick="confirmDelete()">Yes, Delete</button>
+      <button class="btn" onclick="closeDeleteModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const API = 'http://localhost:8000';
 
@@ -611,6 +774,9 @@ const SLOT_LABELS = {800:'08:00',900:'09:00',1000:'10:00',1100:'11:00',1200:'12:
 
 let _teachers = [], _rooms = [], _subjects = [], _years = [];
 let _selectedSubjects = new Set();
+let _editSelectedSubjects = new Set();
+let _pendingDeleteId = null;
+let _pendingDeleteCode = '';
 
 // ── Navigation
 function showPage(id, el) {
@@ -816,7 +982,7 @@ async function deleteYear(id, name) {
   }
 }
 
-// ── Subject multi-select
+// ── Subject multi-select (Add Teacher form)
 function renderSubjectMultiSelect() {
   const container = document.getElementById('t-subjects-list');
   if (!container) return;
@@ -906,7 +1072,7 @@ function clearRoomForm() {
   document.getElementById('add-room-status').textContent = '';
 }
 
-// ── Add Subject  (now sends 'year' field)
+// ── Add Subject
 async function submitAddSubject() {
   const name   = document.getElementById('s-name').value.trim();
   const code   = document.getElementById('s-code').value.trim().toUpperCase();
@@ -1071,11 +1237,11 @@ async function loadRoomTT() {
   catch(e) { c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`; }
 }
 
-// ── Faculty grid
+// ── Faculty grid (with Edit + Delete buttons)
 async function renderTeacherGrid() {
   const grid = document.getElementById('teacher-grid');
   grid.innerHTML = `<div style="padding:40px;text-align:center;color:var(--muted);grid-column:1/-1"><span class="spinner"></span> Loading faculty…</div>`;
-  if (_teachers.length === 0) await fetchTeachers();
+  await fetchTeachers();
   if (_teachers.length === 0) {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👤</div><h3>No Faculty Found</h3><p>Seed the database or add teachers via the sidebar.</p></div>`;
     return;
@@ -1086,10 +1252,22 @@ async function renderTeacherGrid() {
       const subjectCode = ts.subject?.code || ts.subjectId || '';
       return `<span class="subject-tag ${typeClass}">${subjectCode} ${ts.lectureType||''}</span>`;
     }).join('');
-    return `<div class="teacher-card" onclick="jumpToTeacherTT('${t.shortCode}')">
-      <div class="teacher-code">${t.shortCode}</div>
-      <div class="teacher-name">${t.name}</div>
-      <div class="teacher-subjects">${subjectTags||'<span style="font-size:11px;color:var(--muted-light);font-weight:600;">No subjects assigned</span>'}</div>
+    return `<div class="teacher-card" data-id="${t.id}">
+      <div class="teacher-card-top" onclick="jumpToTeacherTT('${t.shortCode}')">
+        <div class="teacher-code">${t.shortCode}</div>
+        <div class="teacher-name">${t.name}</div>
+        <div class="teacher-subjects">${subjectTags||'<span style="font-size:11px;color:var(--muted-light);font-weight:600;">No subjects assigned</span>'}</div>
+      </div>
+      <div class="card-actions">
+        <button class="card-btn edit" onclick="openEditModal(${t.id})">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit
+        </button>
+        <button class="card-btn delete" onclick="openDeleteModal(${t.id}, '${t.shortCode}', '${t.name.replace(/'/g,"\\'")}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          Delete
+        </button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1098,6 +1276,206 @@ function jumpToTeacherTT(code) {
   const item = document.querySelector('.sidebar-item[onclick*="teacher-tt"]');
   if (item) { showPage('teacher-tt', item); document.getElementById('teacher-select').value = code; loadTeacherTT(); }
 }
+
+// ── EDIT MODAL ──────────────────────────────────────────────────
+function openEditModal(teacherId) {
+  const teacher = _teachers.find(t => t.id === teacherId);
+  if (!teacher) return;
+
+  document.getElementById('edit-teacher-id').value = teacher.id;
+  document.getElementById('edit-t-name').value = teacher.name;
+  document.getElementById('edit-t-code').value = teacher.shortCode;
+  document.getElementById('edit-status').textContent = '';
+
+  // Reset edit subject selection
+  _editSelectedSubjects.clear();
+  document.querySelectorAll('#edit-lecture-types input[type="checkbox"]').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.checkbox-item').classList.remove('checked');
+  });
+
+  // Render subject multi-select for edit modal
+  const container = document.getElementById('edit-subjects-list');
+  if (_subjects.length === 0) {
+    container.innerHTML = `<div style="padding:12px 14px;color:var(--muted);font-size:12px;font-weight:600;">No subjects found.</div>`;
+  } else {
+    container.innerHTML = _subjects.map(s => `
+      <div class="multi-select-option" onclick="toggleEditSubject(${s.id}, this)">
+        <span class="check-icon"></span>
+        <span>${s.code} — ${s.name}</span>
+      </div>
+    `).join('');
+  }
+
+  // Show current assignments as removable tags
+  const assignDiv = document.getElementById('edit-current-assignments');
+  const assignments = teacher.subjects || [];
+  if (assignments.length === 0) {
+    assignDiv.innerHTML = `<span style="font-size:12px;color:var(--muted-light);font-weight:600;">No assignments yet.</span>`;
+  } else {
+    assignDiv.innerHTML = assignments.map(ts => {
+      const typeClass = (ts.lectureType||'THEORY').toLowerCase();
+      const code = ts.subject?.code || '';
+      return `<span class="subject-tag ${typeClass}" style="display:inline-flex;align-items:center;gap:5px;padding:3px 8px 3px 10px;">
+        ${code} ${ts.lectureType}
+        <span onclick="removeAssignment(${ts.id}, this.parentElement)" style="cursor:pointer;font-size:11px;opacity:0.6;line-height:1;margin-left:2px;" title="Remove">✕</span>
+      </span>`;
+    }).join('');
+  }
+
+  document.getElementById('edit-modal').classList.add('open');
+  document.getElementById('edit-t-name').focus();
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  _editSelectedSubjects.clear();
+}
+
+function handleModalBackdropClick(e) {
+  if (e.target === document.getElementById('edit-modal')) closeEditModal();
+}
+
+function toggleEditSubject(id, el) {
+  if (_editSelectedSubjects.has(id)) {
+    _editSelectedSubjects.delete(id);
+    el.classList.remove('selected');
+    el.querySelector('.check-icon').textContent = '';
+  } else {
+    _editSelectedSubjects.add(id);
+    el.classList.add('selected');
+    el.querySelector('.check-icon').textContent = '✓';
+  }
+}
+
+async function removeAssignment(tsId, tagEl) {
+  // Optimistically remove from UI
+  tagEl.style.opacity = '0.4';
+  tagEl.style.pointerEvents = 'none';
+  try {
+    const r = await fetch(`${API}/teacher-subjects/${tsId}`, { method: 'DELETE' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    tagEl.remove();
+    toast('Assignment removed', 'success');
+    await fetchTeachers();
+  } catch(e) {
+    tagEl.style.opacity = '1';
+    tagEl.style.pointerEvents = 'auto';
+    toast('Failed to remove: ' + e.message, 'error');
+  }
+}
+
+async function submitEditTeacher() {
+  const id   = parseInt(document.getElementById('edit-teacher-id').value);
+  const name = document.getElementById('edit-t-name').value.trim();
+  const code = document.getElementById('edit-t-code').value.trim().toUpperCase();
+  const status = document.getElementById('edit-status');
+
+  if (!name || !code) { toast('Name and code are required', 'error'); return; }
+
+  const selectedTypes = Array.from(
+    document.querySelectorAll('#edit-lecture-types input[type="checkbox"]:checked')
+  ).map(cb => cb.value);
+
+  const btn = document.getElementById('edit-save-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…';
+  btn.disabled = true;
+  status.textContent = '';
+
+  try {
+    // 1. Update name/code via PATCH
+    const r = await fetch(`${API}/teachers/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, shortCode: code })
+    });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.detail || err.message || `HTTP ${r.status}`);
+    }
+
+    // 2. Add new subject assignments if any selected
+    if (_editSelectedSubjects.size > 0 && selectedTypes.length > 0) {
+      const r2 = await fetch(`${API}/teachers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, shortCode: code,
+          subjectIds: Array.from(_editSelectedSubjects),
+          lectureTypes: selectedTypes
+        })
+      });
+      if (!r2.ok) {
+        const err = await r2.json().catch(() => ({}));
+        throw new Error(err.detail || err.message || `HTTP ${r2.status}`);
+      }
+    }
+
+    toast(`${code} updated successfully`, 'success');
+    log(`Teacher updated: ${code} — ${name}`, 'success');
+    closeEditModal();
+    await fetchTeachers();
+    renderTeacherGrid();
+    await refreshDropdowns();
+  } catch(e) {
+    toast('Save failed: ' + e.message, 'error');
+    status.textContent = '✗ ' + e.message;
+    status.style.color = '#c0392b';
+  }
+
+  btn.innerHTML = '✓ Save Changes';
+  btn.disabled = false;
+}
+
+// ── DELETE MODAL ─────────────────────────────────────────────────
+function openDeleteModal(id, code, name) {
+  _pendingDeleteId   = id;
+  _pendingDeleteCode = code;
+  document.getElementById('confirm-title').textContent = `Delete ${code}?`;
+  document.getElementById('confirm-desc').textContent  =
+    `This will permanently remove "${name}" and all their timetable entries. This cannot be undone.`;
+  document.getElementById('delete-modal').classList.add('open');
+}
+
+function closeDeleteModal() {
+  document.getElementById('delete-modal').classList.remove('open');
+  _pendingDeleteId = null;
+}
+
+function handleDeleteBackdropClick(e) {
+  if (e.target === document.getElementById('delete-modal')) closeDeleteModal();
+}
+
+async function confirmDelete() {
+  if (!_pendingDeleteId) return;
+  const btn = document.getElementById('confirm-delete-btn');
+  btn.innerHTML = '<span class="spinner"></span> Deleting…';
+  btn.disabled = true;
+
+  try {
+    const r = await fetch(`${API}/teachers/${_pendingDeleteId}`, { method: 'DELETE' });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.detail || err.message || `HTTP ${r.status}`);
+    }
+    toast(`Teacher ${_pendingDeleteCode} deleted`, 'success');
+    log(`Teacher deleted: ${_pendingDeleteCode}`, 'warn');
+    closeDeleteModal();
+    await fetchTeachers();
+    renderTeacherGrid();
+    await refreshDropdowns();
+  } catch(e) {
+    toast('Delete failed: ' + e.message, 'error');
+  }
+
+  btn.innerHTML = 'Yes, Delete';
+  btn.disabled = false;
+}
+
+// ── ESC key closes modals
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeEditModal(); closeDeleteModal(); }
+});
 
 // ── Init
 (async function init() {
