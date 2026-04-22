@@ -8,6 +8,8 @@ from app.routes.rooms import router as rooms_router
 from app.routes.subjects import router as subjects_router
 from app.routes.timeslots import router as timeslots_router
 from app.database.seed import seed
+from app.routes.years import router as years_router
+
 
 app = FastAPI(title="AI Timetable Generator")
 
@@ -23,6 +25,7 @@ app.include_router(teachers_router)
 app.include_router(rooms_router)
 app.include_router(subjects_router)
 app.include_router(timeslots_router)
+app.include_router(years_router)
 
 
 @app.on_event("startup")

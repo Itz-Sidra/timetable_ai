@@ -19,7 +19,6 @@
     --muted:      #8891ab;
     --muted-light:#b0b8cf;
 
-    /* Cell colors — pastel, matching the image */
     --theory-bg:  #fef3e2;
     --theory-border: #f5a623;
     --theory-text: #7a4f1a;
@@ -49,7 +48,6 @@
     font-size: 14px;
   }
 
-  /* ── HEADER ── */
   header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -64,11 +62,7 @@
     z-index: 100;
   }
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .logo { display: flex; align-items: center; gap: 12px; }
 
   .logo-mark {
     width: 38px; height: 38px;
@@ -76,618 +70,201 @@
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     font-family: var(--font);
-    font-size: 14px;
-    font-weight: 800;
-    color: #fff;
+    font-size: 14px; font-weight: 800; color: #fff;
     letter-spacing: -0.5px;
     box-shadow: 0 2px 8px rgba(74,127,212,0.35);
   }
 
-  .logo-text h1 {
-    font-family: var(--font);
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.3px;
-  }
+  .logo-text h1 { font-family: var(--font); font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+  .logo-text p  { font-size: 11.5px; color: var(--muted); font-weight: 500; margin-top: 1px; }
 
-  .logo-text p {
-    font-size: 11.5px;
-    color: var(--muted);
-    font-weight: 500;
-    margin-top: 1px;
-  }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
 
-  .header-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  /* ── BUTTONS ── */
   .btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1.5px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .15s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    white-space: nowrap;
+    padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--text);
+    font-family: var(--font); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .15s ease;
+    display: inline-flex; align-items: center; gap: 6px;
+    text-decoration: none; white-space: nowrap;
   }
-
   .btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 
-  .btn-primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(74,127,212,0.3);
-  }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(74,127,212,0.3); }
+  .btn-primary:hover { background: #3a6bbf; border-color: #3a6bbf; color: #fff; box-shadow: 0 4px 14px rgba(74,127,212,0.4); }
 
-  .btn-primary:hover {
-    background: #3a6bbf;
-    border-color: #3a6bbf;
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(74,127,212,0.4);
-  }
-
-  .btn-outline-danger {
-    border-color: #f5a0a0;
-    color: #c0392b;
-    background: #fff8f8;
-  }
+  .btn-outline-danger { border-color: #f5a0a0; color: #c0392b; background: #fff8f8; }
   .btn-outline-danger:hover { background: #fde8e8; border-color: #c0392b; color: #c0392b; }
 
-  /* ── STATUS BADGE ── */
+  .btn-success { background: #1a7a45; border-color: #1a7a45; color: #fff; box-shadow: 0 2px 8px rgba(26,122,69,0.3); }
+  .btn-success:hover { background: #155e36; border-color: #155e36; color: #fff; }
+
   .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-family: var(--font);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 11px; font-family: var(--font); font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
   }
+  .status-badge.ready   { background: #e6f7ee; border: 1.5px solid #a8e6c3; color: #1a7a45; }
+  .status-badge.running { background: #fff8e6; border: 1.5px solid #f5d48a; color: #8a6200; }
+  .status-badge.error   { background: #fde8e8; border: 1.5px solid #f5a0a0; color: #c0392b; }
+  .status-badge.idle    { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); }
 
-  .status-badge.ready    { background: #e6f7ee; border: 1.5px solid #a8e6c3; color: #1a7a45; }
-  .status-badge.running  { background: #fff8e6; border: 1.5px solid #f5d48a; color: #8a6200; }
-  .status-badge.error    { background: #fde8e8; border: 1.5px solid #f5a0a0; color: #c0392b; }
-  .status-badge.idle     { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); }
-
-  .pulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor;
-           animation: pulse 1.4s ease-in-out infinite; }
+  .pulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.4s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.65)} }
 
-  /* ── LAYOUT ── */
-  .app {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    height: calc(100vh - 64px);
-  }
+  .app { display: grid; grid-template-columns: 240px 1fr; height: calc(100vh - 64px); }
 
-  /* ── SIDEBAR ── */
-  .sidebar {
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 20px 0;
-    overflow-y: auto;
-  }
-
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; overflow-y: auto; }
   .sidebar-section { margin-bottom: 4px; }
 
   .sidebar-label {
-    font-size: 10px;
-    font-family: var(--font);
-    font-weight: 800;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--muted-light);
-    padding: 0 18px 6px;
-    display: block;
+    font-size: 10px; font-family: var(--font); font-weight: 800;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--muted-light); padding: 0 18px 6px; display: block;
   }
 
   .sidebar-item {
-    padding: 9px 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13.5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .12s;
-    border-left: 3px solid transparent;
-    color: var(--muted);
-    user-select: none;
+    padding: 9px 18px; display: flex; align-items: center; gap: 10px;
+    font-size: 13.5px; font-weight: 600; cursor: pointer;
+    transition: all .12s; border-left: 3px solid transparent;
+    color: var(--muted); user-select: none;
   }
-
   .sidebar-item:hover { background: var(--bg); color: var(--text); }
-  .sidebar-item.active {
-    background: var(--accent-soft);
-    border-left-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .sidebar-item .icon {
-    width: 26px; height: 26px;
-    border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-    background: var(--bg);
-    flex-shrink: 0;
-  }
+  .sidebar-item.active { background: var(--accent-soft); border-left-color: var(--accent); color: var(--accent); }
+  .sidebar-item .icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; background: var(--bg); flex-shrink: 0; }
   .sidebar-item.active .icon { background: var(--accent-soft); }
 
   .sidebar-divider { height: 1px; background: var(--border-light); margin: 10px 18px; }
 
-  /* ── CONTENT ── */
-  .content {
-    overflow-y: auto;
-    padding: 28px 36px;
-    background: var(--bg);
-  }
+  .content { overflow-y: auto; padding: 28px 36px; background: var(--bg); }
 
   .page { display: none; }
   .page.active { display: block; }
 
   .page-header { margin-bottom: 24px; }
-  .page-header h2 {
-    font-family: var(--font);
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.4px;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
+  .page-header h2 { font-family: var(--font); font-size: 22px; font-weight: 800; letter-spacing: -0.4px; color: var(--text); margin-bottom: 4px; }
   .page-header p { color: var(--muted); font-size: 13px; font-weight: 500; }
 
-  /* ── STATS ── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-    margin-bottom: 24px;
-  }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 24px; }
 
-  .stat-card {
-    background: var(--card);
-    border: 1.5px solid var(--border-light);
-    border-radius: 12px;
-    padding: 16px 18px;
-    transition: border-color .2s, box-shadow .2s;
-  }
-
+  .stat-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 16px 18px; transition: border-color .2s, box-shadow .2s; }
   .stat-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(74,127,212,0.1); }
 
-  .stat-value {
-    font-family: var(--font);
-    font-size: 30px;
-    font-weight: 800;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
+  .stat-value { font-family: var(--font); font-size: 30px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
   .stat-label { font-size: 11.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-  /* ── CONSOLE ── */
-  .console-section {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 24px;
-    box-shadow: 0 1px 4px rgba(44,50,80,0.04);
-  }
-
-  .console-header {
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #f8f9fd;
-  }
-
-  .console-title {
-    font-family: var(--font);
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-
-  .console-body {
-    padding: 14px 16px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    line-height: 1.8;
-    min-height: 100px;
-    max-height: 200px;
-    overflow-y: auto;
-    background: #fafbfd;
-    color: #5a6280;
-  }
-
+  .console-section { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(44,50,80,0.04); }
+  .console-header { padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: #f8f9fd; }
+  .console-title { font-family: var(--font); font-size: 11px; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 7px; text-transform: uppercase; letter-spacing: 0.8px; }
+  .console-body { padding: 14px 16px; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.8; min-height: 100px; max-height: 200px; overflow-y: auto; background: #fafbfd; color: #5a6280; }
   .console-body .log-line.info    { color: #4a7fd4; }
   .console-body .log-line.warn    { color: #d4890a; }
   .console-body .log-line.error   { color: #c0392b; }
   .console-body .log-line.success { color: #1a7a45; }
 
-  /* ── TIMETABLE ── */
-  .timetable-controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .timetable-controls { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
 
-  .select-styled {
-    padding: 9px 14px;
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    min-width: 150px;
-    transition: border-color .15s;
-  }
-
+  .select-styled { padding: 9px 14px; background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; min-width: 150px; transition: border-color .15s; }
   .select-styled:focus { outline: none; border-color: var(--accent); }
 
-  .timetable-wrapper {
-    overflow-x: auto;
-    border-radius: 12px;
-    border: 1.5px solid var(--border);
-    box-shadow: 0 2px 10px rgba(44,50,80,0.06);
-    background: white;
-  }
+  .timetable-wrapper { overflow-x: auto; border-radius: 12px; border: 1.5px solid var(--border); box-shadow: 0 2px 10px rgba(44,50,80,0.06); background: white; }
 
-  table.tt {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 11.5px;
-  }
+  table.tt { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  table.tt th { background: #f0f3fa; padding: 11px 8px; text-align: center; font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--border); border-right: 1px solid var(--border-light); white-space: nowrap; min-width: 110px; }
+  table.tt th:first-child { background: #eaecf5; min-width: 88px; color: var(--text); }
+  table.tt th.day-head { background: #e8ecf8; color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 1px; }
+  table.tt td { border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); padding: 0; vertical-align: top; height: 64px; }
+  table.tt td:first-child { background: #f8f9fd; padding: 0 10px; text-align: center; font-family: var(--font); font-size: 10.5px; font-weight: 700; color: var(--muted); white-space: nowrap; vertical-align: middle; border-right: 2px solid var(--border); }
 
-  table.tt th {
-    background: #f0f3fa;
-    padding: 11px 8px;
-    text-align: center;
-    font-family: var(--font);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 2px solid var(--border);
-    border-right: 1px solid var(--border-light);
-    white-space: nowrap;
-    min-width: 110px;
-  }
+  .cell-empty { height: 64px; background: repeating-linear-gradient(-45deg, #fafbfd, #fafbfd 6px, #f5f7fc 6px, #f5f7fc 7px); }
 
-  table.tt th:first-child {
-    background: #eaecf5;
-    min-width: 88px;
-    color: var(--text);
-  }
-
-  /* Day column headers */
-  table.tt th.day-head {
-    background: #e8ecf8;
-    color: var(--accent);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 1px;
-  }
-
-  table.tt td {
-    border-right: 1px solid var(--border-light);
-    border-bottom: 1px solid var(--border-light);
-    padding: 0;
-    vertical-align: top;
-    height: 64px;
-  }
-
-  table.tt td:first-child {
-    background: #f8f9fd;
-    padding: 0 10px;
-    text-align: center;
-    font-family: var(--font);
-    font-size: 10.5px;
-    font-weight: 700;
-    color: var(--muted);
-    white-space: nowrap;
-    vertical-align: middle;
-    border-right: 2px solid var(--border);
-  }
-
-  .cell-empty {
-    height: 64px;
-    background: repeating-linear-gradient(
-      -45deg, #fafbfd, #fafbfd 6px, #f5f7fc 6px, #f5f7fc 7px
-    );
-  }
-
-  .cell-entry {
-    padding: 6px 8px;
-    height: 100%;
-    min-height: 64px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1px;
-    cursor: pointer;
-    transition: filter .12s, opacity .12s;
-    border-radius: 0;
-  }
-
+  .cell-entry { padding: 6px 8px; height: 100%; min-height: 64px; display: flex; flex-direction: column; justify-content: center; gap: 1px; cursor: pointer; transition: filter .12s, opacity .12s; }
   .cell-entry:hover { filter: brightness(0.96); }
-
   .cell-entry.theory   { background: var(--theory-bg);   border-left: 3.5px solid var(--theory-border); }
   .cell-entry.lab      { background: var(--lab-bg);      border-left: 3.5px solid var(--lab-border); }
   .cell-entry.tutorial { background: var(--tutorial-bg); border-left: 3.5px solid var(--tutorial-border); }
+  .cell-entry.lunch    { background: #f9fafc; border-left: 3.5px solid var(--lunch-border); justify-content: center; align-items: flex-start; }
 
-  .cell-entry.lunch {
-    background: #f9fafc;
-    border-left: 3.5px solid var(--lunch-border);
-    justify-content: center;
-    align-items: flex-start;
-  }
-
-  .cell-subject {
-    font-family: var(--font);
-    font-weight: 700;
-    font-size: 11px;
-    line-height: 1.3;
-  }
-
+  .cell-subject { font-family: var(--font); font-weight: 700; font-size: 11px; line-height: 1.3; }
   .cell-entry.theory   .cell-subject { color: var(--theory-text); }
   .cell-entry.lab      .cell-subject { color: var(--lab-text); }
   .cell-entry.tutorial .cell-subject { color: var(--tutorial-text); }
 
-  .cell-teacher {
-    font-size: 10px;
-    color: var(--muted);
-    font-weight: 600;
-    font-family: var(--font);
-  }
-
-  .cell-room {
-    font-size: 9.5px;
-    font-family: var(--font);
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 4px;
-    background: rgba(255,255,255,0.7);
-    color: var(--muted);
-    width: fit-content;
-    margin-top: 2px;
-    border: 1px solid rgba(0,0,0,0.06);
-  }
-
+  .cell-teacher { font-size: 10px; color: var(--muted); font-weight: 600; font-family: var(--font); }
+  .cell-room    { font-size: 9.5px; font-family: var(--font); font-weight: 700; padding: 1px 5px; border-radius: 4px; background: rgba(255,255,255,0.7); color: var(--muted); width: fit-content; margin-top: 2px; border: 1px solid rgba(0,0,0,0.06); }
   .cell-entry.theory   .cell-room { color: var(--theory-text); background: rgba(245,166,35,0.12); }
   .cell-entry.lab      .cell-room { color: var(--lab-text); background: rgba(58,171,138,0.12); }
   .cell-entry.tutorial .cell-room { color: var(--tutorial-text); background: rgba(155,109,214,0.12); }
 
-  /* ── HOW IT WORKS ── */
-  .how-card {
-    background: var(--card);
-    border: 1.5px solid var(--border-light);
-    border-radius: 12px;
-    padding: 22px 24px;
-    box-shadow: 0 1px 4px rgba(44,50,80,0.04);
-  }
+  .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(74,127,212,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin .65s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .how-card h3 {
-    font-family: var(--font);
-    font-size: 14px;
-    font-weight: 800;
-    margin-bottom: 18px;
-    color: var(--text);
-  }
+  #toast-container { position: fixed; bottom: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+  .toast { padding: 11px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; max-width: 300px; animation: slideIn .22s ease; border: 1.5px solid; font-family: var(--font); box-shadow: 0 4px 16px rgba(44,50,80,0.12); }
+  .toast.success { background: #e6f7ee; border-color: #a8e6c3; color: #1a7a45; }
+  .toast.error   { background: #fde8e8; border-color: #f5a0a0; color: #c0392b; }
+  .toast.info    { background: var(--card); border-color: var(--border); color: var(--text); }
+  @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-  .how-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    gap: 16px;
-  }
-
-  .how-item {}
-
-  .how-step {
-    font-family: var(--font);
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: var(--accent);
-    margin-bottom: 5px;
-    text-transform: uppercase;
-  }
-
-  .how-item p { font-size: 12.5px; color: var(--muted); line-height: 1.65; font-weight: 500; }
-
-  /* ── LEGEND ── */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: var(--muted);
-    padding: 4px 10px;
-    background: var(--card);
-    border-radius: 20px;
-    border: 1.5px solid var(--border);
-    font-weight: 600;
-  }
-
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); padding: 4px 10px; background: var(--card); border-radius: 20px; border: 1.5px solid var(--border); font-weight: 600; }
   .legend-dot { width: 9px; height: 9px; border-radius: 3px; }
   .legend-dot.theory   { background: var(--theory-border); }
   .legend-dot.lab      { background: var(--lab-border); }
   .legend-dot.tutorial { background: var(--tutorial-border); }
 
-  /* ── SPINNER ── */
-  .spinner {
-    display: inline-block;
-    width: 13px; height: 13px;
-    border: 2px solid rgba(74,127,212,0.2);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin .65s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── TOAST ── */
-  #toast-container {
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .toast {
-    padding: 11px 16px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    max-width: 300px;
-    animation: slideIn .22s ease;
-    border: 1.5px solid;
-    font-family: var(--font);
-    box-shadow: 0 4px 16px rgba(44,50,80,0.12);
-  }
-
-  .toast.success { background: #e6f7ee; border-color: #a8e6c3; color: #1a7a45; }
-  .toast.error   { background: #fde8e8; border-color: #f5a0a0; color: #c0392b; }
-  .toast.info    { background: var(--card); border-color: var(--border); color: var(--text); }
-
-  @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
-
-  /* ── UNIT CARDS (Syllabus) ── */
-  .unit-card {
-    background: var(--card);
-    border: 1.5px solid var(--border-light);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 10px;
-    transition: border-color .2s, box-shadow .2s;
-  }
-
-  .unit-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(74,127,212,0.08); }
-
-  .unit-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
-
-  .unit-badge {
-    font-family: var(--font);
-    font-size: 10px;
-    font-weight: 800;
-    padding: 3px 9px;
-    border-radius: 5px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    flex-shrink: 0;
-    margin-top: 1px;
-    letter-spacing: 0.5px;
-  }
-
-  .unit-title { font-family: var(--font); font-size: 14px; font-weight: 700; margin-bottom: 2px; }
-  .unit-hours { font-size: 11.5px; color: var(--muted); font-weight: 600; }
-
-  .unit-topics {
-    color: var(--muted);
-    font-size: 12.5px;
-    line-height: 1.75;
-    padding-left: 10px;
-    border-left: 3px solid var(--border);
-    font-weight: 500;
-  }
-
-  /* ── TEACHER GRID ── */
-  .teacher-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 10px;
-    margin-bottom: 24px;
-  }
-
-  .teacher-card {
-    background: var(--card);
-    border: 1.5px solid var(--border-light);
-    border-radius: 12px;
-    padding: 16px 18px;
-    cursor: pointer;
-    transition: all .18s;
-  }
-
+  .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .teacher-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 16px 18px; cursor: pointer; transition: all .18s; }
   .teacher-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(74,127,212,0.1); transform: translateY(-1px); }
-
-  .teacher-code {
-    font-family: var(--font);
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--accent);
-    margin-bottom: 2px;
-    letter-spacing: -0.5px;
-  }
-
+  .teacher-code { font-family: var(--font); font-size: 22px; font-weight: 800; color: var(--accent); margin-bottom: 2px; letter-spacing: -0.5px; }
   .teacher-name { font-size: 12.5px; color: var(--muted); font-weight: 600; }
-
   .teacher-subjects { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-
-  .subject-tag {
-    font-size: 10px;
-    font-family: var(--font);
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-    border: 1.5px solid;
-  }
-
+  .subject-tag { font-size: 10px; font-family: var(--font); font-weight: 700; padding: 2px 8px; border-radius: 4px; border: 1.5px solid; }
   .subject-tag.theory   { border-color: var(--theory-border); color: var(--theory-text); background: var(--theory-bg); }
   .subject-tag.lab      { border-color: var(--lab-border); color: var(--lab-text); background: var(--lab-bg); }
   .subject-tag.tutorial { border-color: var(--tutorial-border); color: var(--tutorial-text); background: var(--tutorial-bg); }
 
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-    background: var(--card);
-    border-radius: 12px;
-    border: 1.5px dashed var(--border);
-  }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); background: var(--card); border-radius: 12px; border: 1.5px dashed var(--border); }
   .empty-state .empty-icon { font-size: 40px; margin-bottom: 14px; }
   .empty-state h3 { font-family: var(--font); font-size: 15px; color: var(--text); margin-bottom: 6px; font-weight: 700; }
   .empty-state p { font-size: 13px; font-weight: 500; }
 
-  /* ── SCROLLBAR ── */
+  /* ── FORM ── */
+  .form-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 14px; padding: 28px 30px; max-width: 560px; box-shadow: 0 2px 10px rgba(44,50,80,0.05); }
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-family: var(--font); font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 7px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .form-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 13.5px; font-weight: 500; color: var(--text); background: var(--surface); transition: border-color .15s, box-shadow .15s; outline: none; }
+  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(74,127,212,0.1); }
+  .form-input::placeholder { color: var(--muted-light); }
+  .form-select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font); font-size: 13.5px; font-weight: 600; color: var(--text); background: var(--surface); cursor: pointer; outline: none; transition: border-color .15s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238891ab' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .form-select:focus { border-color: var(--accent); }
+  .checkbox-group { display: flex; gap: 12px; flex-wrap: wrap; }
+  .checkbox-item { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; transition: all .12s; font-family: var(--font); font-size: 12.5px; font-weight: 700; color: var(--muted); user-select: none; background: var(--surface); }
+  .checkbox-item:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .checkbox-item.checked { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .checkbox-item input[type="checkbox"] { display: none; }
+  .form-hint { font-size: 11.5px; color: var(--muted); margin-top: 5px; font-weight: 500; }
+  .form-divider { height: 1px; background: var(--border-light); margin: 22px 0; }
+  .form-actions { display: flex; gap: 10px; align-items: center; margin-top: 24px; }
+
+  .warning-banner { background: #fff8e6; border: 1.5px solid #f5d48a; color: #8a6200; border-radius: 10px; padding: 12px 16px; font-size: 12.5px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-family: var(--font); }
+
+  .multi-select-container { border: 1.5px solid var(--border); border-radius: 8px; background: var(--surface); max-height: 160px; overflow-y: auto; transition: border-color .15s; }
+  .multi-select-container:focus-within { border-color: var(--accent); }
+  .multi-select-option { padding: 8px 14px; cursor: pointer; font-size: 13px; font-weight: 600; font-family: var(--font); color: var(--text); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 8px; transition: background .1s; user-select: none; }
+  .multi-select-option:last-child { border-bottom: none; }
+  .multi-select-option:hover { background: var(--bg); }
+  .multi-select-option.selected { background: var(--accent-soft); color: var(--accent); }
+  .multi-select-option .check-icon { width: 16px; height: 16px; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; transition: all .1s; }
+  .multi-select-option.selected .check-icon { background: var(--accent); border-color: var(--accent); color: white; }
+
+  /* Year pills */
+  .year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .year-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .year-name { font-family: var(--font); font-size: 20px; font-weight: 800; color: var(--accent); }
+  .year-id   { font-size: 11px; color: var(--muted); font-weight: 600; }
+
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -712,14 +289,9 @@
     </div>
   </div>
   <div class="header-actions">
-    <span id="status-badge" class="status-badge idle">
-      <span class="pulse"></span>
-      IDLE
-    </span>
-    <button class="btn btn-outline-danger" onclick="runSeed()"> Seed DB</button>
-    <button class="btn btn-primary" id="gen-btn" onclick="generateTimetable()">
-      ✦ Generate Timetable
-    </button>
+    <span id="status-badge" class="status-badge idle"><span class="pulse"></span>IDLE</span>
+    <button class="btn btn-outline-danger" onclick="runSeed()">⚙ Seed DB</button>
+    <button class="btn btn-primary" id="gen-btn" onclick="generateTimetable()">✦ Generate Timetable</button>
   </div>
 </header>
 
@@ -729,23 +301,41 @@
     <div class="sidebar-section">
       <span class="sidebar-label">Overview</span>
       <div class="sidebar-item active" onclick="showPage('overview', this)">
-        <span class="icon"></span> Dashboard
+        <span class="icon">⊞</span> Dashboard
       </div>
     </div>
 
     <div class="sidebar-section">
       <span class="sidebar-label">Timetables</span>
       <div class="sidebar-item" onclick="showPage('division-tt', this)">
-         By Division
+        <span class="icon">▦</span> By Division
       </div>
       <div class="sidebar-item" onclick="showPage('batch-tt', this)">
-         By Batch
+        <span class="icon">◫</span> By Batch
       </div>
       <div class="sidebar-item" onclick="showPage('teacher-tt', this)">
-         By Teacher
+        <span class="icon">◎</span> By Teacher
       </div>
       <div class="sidebar-item" onclick="showPage('room-tt', this)">
-         By Room
+        <span class="icon">▣</span> By Room
+      </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <span class="sidebar-label">Data Management</span>
+      <div class="sidebar-item" onclick="showPage('add-year', this)">
+        <span class="icon">+</span> Add Year
+      </div>
+      <div class="sidebar-item" onclick="showPage('add-teacher', this)">
+        <span class="icon">+</span> Add Teacher
+      </div>
+      <div class="sidebar-item" onclick="showPage('add-room', this)">
+        <span class="icon">+</span> Add Room
+      </div>
+      <div class="sidebar-item" onclick="showPage('add-subject', this)">
+        <span class="icon">+</span> Add Subject
       </div>
     </div>
 
@@ -754,7 +344,7 @@
     <div class="sidebar-section">
       <span class="sidebar-label">Reference</span>
       <div class="sidebar-item" onclick="showPage('teachers-ref', this)">
-        Faculty
+        <span class="icon">☰</span> Faculty
       </div>
     </div>
   </nav>
@@ -768,51 +358,33 @@
         <h2>System Overview</h2>
         <p>AI-powered constraint satisfaction scheduler for SY divisions</p>
       </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value">7</div>
-          <div class="stat-label">Divisions</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">21</div>
-          <div class="stat-label">Batches</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">9</div>
-          <div class="stat-label">Subjects</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">13</div>
-          <div class="stat-label">Faculty</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">8</div>
-          <div class="stat-label">Rooms</div>
-        </div>
+      <div id="no-data-warning" class="warning-banner" style="display:none;">
+        ⚠ No teachers or rooms found. Please add data via the sidebar or click <strong>Seed DB</strong> to populate defaults.
       </div>
-
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">Divisions</div></div>
+        <div class="stat-card"><div class="stat-value">21</div><div class="stat-label">Batches</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-subjects">—</div><div class="stat-label">Subjects</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-teachers">—</div><div class="stat-label">Faculty</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-rooms">—</div><div class="stat-label">Rooms</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-years">—</div><div class="stat-label">Years</div></div>
+      </div>
       <div class="console-section">
         <div class="console-header">
-          <div class="console-title">
-            <span>▶</span> Scheduler Output
-          </div>
+          <div class="console-title"><span>▶</span> Scheduler Output</div>
           <button class="btn" style="font-size:11px;padding:4px 10px;font-weight:700" onclick="clearConsole()">Clear</button>
         </div>
         <div class="console-body" id="console">
           <div class="log-line info">// AI Timetable Scheduler — VIT SY 2025-26</div>
           <div class="log-line info">// DFS + Backtracking CSP Engine ready</div>
-          <div class="log-line info">// Configure DATABASE_URL and click "Seed DB" to begin</div>
+          <div class="log-line info">// Loading data from backend…</div>
         </div>
       </div>
     </div>
 
-    <!-- ── DIVISION TIMETABLE ── -->
+    <!-- ── DIVISION TT ── -->
     <div id="page-division-tt" class="page">
-      <div class="page-header">
-        <h2>Division Timetable</h2>
-        <p>Full weekly schedule for a division (theory + lab overview)</p>
-      </div>
+      <div class="page-header"><h2>Division Timetable</h2><p>Full weekly schedule for a division (theory + lab overview)</p></div>
       <div class="timetable-controls">
         <select class="select-styled" id="div-select" onchange="loadDivisionTT()">
           <option value="">Select Division…</option>
@@ -828,12 +400,9 @@
       <div id="div-tt-container"></div>
     </div>
 
-    <!-- ── BATCH TIMETABLE ── -->
+    <!-- ── BATCH TT ── -->
     <div id="page-batch-tt" class="page">
-      <div class="page-header">
-        <h2>Batch Timetable</h2>
-        <p>Theory + Lab sessions for a specific batch</p>
-      </div>
+      <div class="page-header"><h2>Batch Timetable</h2><p>Theory + Lab sessions for a specific batch</p></div>
       <div class="timetable-controls">
         <select class="select-styled" id="batch-div-select" onchange="loadBatchOptions()">
           <option value="">Select Division…</option>
@@ -847,52 +416,185 @@
       <div id="batch-tt-container"></div>
     </div>
 
-    <!-- ── TEACHER TIMETABLE ── -->
+    <!-- ── TEACHER TT ── -->
     <div id="page-teacher-tt" class="page">
-      <div class="page-header">
-        <h2>Teacher Timetable</h2>
-        <p>Weekly schedule for a faculty member</p>
-      </div>
+      <div class="page-header"><h2>Teacher Timetable</h2><p>Weekly schedule for a faculty member</p></div>
       <div class="timetable-controls">
         <select class="select-styled" id="teacher-select" onchange="loadTeacherTT()">
           <option value="">Select Teacher…</option>
-          <option>ASK</option><option>KS</option><option>RAA</option><option>VUR</option>
-          <option>VSB</option><option>ABK</option><option>GZZ</option><option>AGS</option>
-          <option>DAG</option><option>OSD</option><option>ACA</option><option>KG</option><option>VKS</option>
         </select>
       </div>
       <div id="teacher-tt-container"></div>
     </div>
 
-    <!-- ── ROOM TIMETABLE ── -->
+    <!-- ── ROOM TT ── -->
     <div id="page-room-tt" class="page">
-      <div class="page-header">
-        <h2>Room Schedule</h2>
-        <p>Occupancy view for a classroom or lab</p>
-      </div>
+      <div class="page-header"><h2>Room Schedule</h2><p>Occupancy view for a classroom or lab</p></div>
       <div class="timetable-controls">
         <select class="select-styled" id="room-select" onchange="loadRoomTT()">
           <option value="">Select Room…</option>
-          <optgroup label="Theory Rooms">
-            <option>4307</option><option>4006</option><option>4005</option>
-          </optgroup>
-          <optgroup label="Lab Rooms">
-            <option>4304</option><option>4007</option><option>4008</option>
-            <option>4003</option><option>4105</option>
-          </optgroup>
         </select>
       </div>
       <div id="room-tt-container"></div>
     </div>
 
+    <!-- ── ADD YEAR ── -->
+    <div id="page-add-year" class="page">
+      <div class="page-header">
+        <h2>Add Year</h2>
+        <p>Register an academic year (e.g. SY, TY, FY) before adding subjects</p>
+      </div>
+
+      <!-- Existing years list -->
+      <div style="margin-bottom:20px;">
+        <div style="font-family:var(--font);font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Existing Years</div>
+        <div class="year-grid" id="year-list">
+          <div style="color:var(--muted);font-size:12.5px;font-weight:600;grid-column:1/-1">
+            <span class="spinner"></span> Loading…
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <!-- Quick-pick buttons -->
+        <div class="form-group">
+          <label class="form-label">Quick Pick</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item" id="ypick-SY" onclick="setYearQuickPick('SY')">SY</label>
+            <label class="checkbox-item" id="ypick-TY" onclick="setYearQuickPick('TY')">TY</label>
+            <label class="checkbox-item" id="ypick-FY" onclick="setYearQuickPick('FY')">FY</label>
+          </div>
+          <div class="form-hint">Click to pre-fill the field below, or type a custom name.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="y-name">Year Name</label>
+          <input class="form-input" id="y-name" type="text" placeholder="e.g. SY, TY, FY" maxlength="20" autocomplete="off">
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-success" id="add-year-btn" onclick="submitAddYear()">✓ Add Year</button>
+          <button class="btn" onclick="document.getElementById('y-name').value='';document.getElementById('add-year-status').textContent=''">Clear</button>
+          <span id="add-year-status" style="font-size:12px;color:var(--muted);font-weight:600;margin-left:4px;"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADD TEACHER ── -->
+    <div id="page-add-teacher" class="page">
+      <div class="page-header"><h2>Add Teacher</h2><p>Register a new faculty member and assign subject responsibilities</p></div>
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label" for="t-name">Full Name</label>
+          <input class="form-input" id="t-name" type="text" placeholder="e.g. MR. JOHN DOE" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="t-code">Short Code</label>
+          <input class="form-input" id="t-code" type="text" placeholder="e.g. JD" maxlength="6" autocomplete="off">
+          <div class="form-hint">Unique 2–6 character code used in timetable cells.</div>
+        </div>
+        <div class="form-divider"></div>
+        <div class="form-group">
+          <label class="form-label">Subjects</label>
+          <div class="multi-select-container" id="t-subjects-list">
+            <div style="padding:16px;text-align:center;color:var(--muted);font-size:12px;font-weight:600;">
+              <span class="spinner"></span> Loading subjects…
+            </div>
+          </div>
+          <div class="form-hint">Click to select subjects this teacher handles.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lecture Types</label>
+          <div class="checkbox-group" id="t-lecture-types">
+            <label class="checkbox-item" id="ltype-THEORY"><input type="checkbox" value="THEORY"> Theory</label>
+            <label class="checkbox-item" id="ltype-LAB"><input type="checkbox" value="LAB"> Lab</label>
+            <label class="checkbox-item" id="ltype-TUTORIAL"><input type="checkbox" value="TUTORIAL"> Tutorial</label>
+          </div>
+          <div class="form-hint">Select all lecture types this teacher can deliver.</div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-success" id="add-teacher-btn" onclick="submitAddTeacher()">✓ Add Teacher</button>
+          <button class="btn" onclick="clearTeacherForm()">Clear</button>
+          <span id="add-teacher-status" style="font-size:12px;color:var(--muted);font-weight:600;margin-left:4px;"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADD ROOM ── -->
+    <div id="page-add-room" class="page">
+      <div class="page-header"><h2>Add Room</h2><p>Register a new classroom or laboratory</p></div>
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label" for="r-number">Room Number</label>
+          <input class="form-input" id="r-number" type="text" placeholder="e.g. 4310" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="r-type">Room Type</label>
+          <select class="form-select" id="r-type">
+            <option value="">Select type…</option>
+            <option value="THEORY">THEORY</option>
+            <option value="LAB">LAB</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="r-capacity">Capacity <span style="color:var(--muted);font-weight:500;text-transform:none;">(optional)</span></label>
+          <input class="form-input" id="r-capacity" type="number" min="1" placeholder="e.g. 60" autocomplete="off">
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-success" id="add-room-btn" onclick="submitAddRoom()">✓ Add Room</button>
+          <button class="btn" onclick="clearRoomForm()">Clear</button>
+          <span id="add-room-status" style="font-size:12px;color:var(--muted);font-weight:600;margin-left:4px;"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADD SUBJECT ── -->
+    <div id="page-add-subject" class="page">
+      <div class="page-header"><h2>Add Subject</h2><p>Register a new subject and configure its lecture components</p></div>
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label" for="s-name">Subject Name</label>
+          <input class="form-input" id="s-name" type="text" placeholder="e.g. MACHINE LEARNING" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="s-code">Subject Code</label>
+          <input class="form-input" id="s-code" type="text" placeholder="e.g. ML" maxlength="10" autocomplete="off">
+          <div class="form-hint">Unique short code shown in timetable cells.</div>
+        </div>
+
+        <!-- ★ NEW: Year selector -->
+        <div class="form-group">
+          <label class="form-label" for="s-year">Academic Year</label>
+          <select class="form-select" id="s-year">
+            <option value="">Loading years…</option>
+          </select>
+          <div class="form-hint">Which year this subject belongs to. <a href="#" onclick="showPage('add-year', document.querySelector('.sidebar-item[onclick*=add-year]'));return false;" style="color:var(--accent);font-weight:700;">+ Add a new year</a></div>
+        </div>
+
+        <div class="form-divider"></div>
+        <div class="form-group">
+          <label class="form-label">Lecture Components</label>
+          <div class="checkbox-group" id="s-lecture-types">
+            <label class="checkbox-item" id="sltype-theory"><input type="checkbox" value="theory"> Theory</label>
+            <label class="checkbox-item" id="sltype-lab"><input type="checkbox" value="lab"> Lab</label>
+            <label class="checkbox-item" id="sltype-tutorial"><input type="checkbox" value="tutorial"> Tutorial</label>
+          </div>
+          <div class="form-hint">Select all components this subject includes.</div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-success" id="add-subject-btn" onclick="submitAddSubject()">✓ Add Subject</button>
+          <button class="btn" onclick="clearSubjectForm()">Clear</button>
+          <span id="add-subject-status" style="font-size:12px;color:var(--muted);font-weight:600;margin-left:4px;"></span>
+        </div>
+      </div>
+    </div>
 
     <!-- ── FACULTY ── -->
     <div id="page-teachers-ref" class="page">
-      <div class="page-header">
-        <h2>Faculty Directory</h2>
-        <p>SY CSE (AI&ML) teaching staff</p>
+      <div class="page-header"><h2>Faculty Directory</h2><p>SY CSE (AI&ML) teaching staff</p></div>
+      <div class="teacher-grid" id="teacher-grid">
+        <div style="padding:40px;text-align:center;color:var(--muted);grid-column:1/-1"><span class="spinner"></span> Loading faculty…</div>
       </div>
-      <div class="teacher-grid" id="teacher-grid"></div>
     </div>
 
   </main>
@@ -905,35 +607,22 @@ const API = 'http://localhost:8000';
 
 const DAYS_ORDER  = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY'];
 const SLOT_TIMES  = [800,900,1000,1100,1200,1300,1400,1500,1600];
-const SLOT_LABELS = {
-  800:'08:00', 900:'09:00', 1000:'10:00', 1100:'11:00',
-  1200:'12:00', 1300:'13:00', 1400:'14:00', 1500:'15:00',
-  1600:'16:00', 1700:'17:00'
-};
+const SLOT_LABELS = {800:'08:00',900:'09:00',1000:'10:00',1100:'11:00',1200:'12:00',1300:'13:00',1400:'14:00',1500:'15:00',1600:'16:00',1700:'17:00'};
 
-const TEACHERS_DATA = [
-  {code:'ASK', name:'Mr. Ankesh Suresh Khare',       subjects:[{code:'AI',type:'theory'},{code:'RAAD',type:'theory'},{code:'DT',type:'tutorial'}]},
-  {code:'KS',  name:'Dr. Kailash Shaw',               subjects:[{code:'ADS',type:'theory'},{code:'ADS',type:'lab'}]},
-  {code:'RAA', name:'Rashmi Aniket Asole',            subjects:[{code:'ADS',type:'lab'}]},
-  {code:'VUR', name:'Dr. Vijay Uttam Rathod',         subjects:[{code:'POCACD',type:'theory'},{code:'POCACD',type:'lab'},{code:'DT',type:'tutorial'}]},
-  {code:'VSB', name:'Mrs. Vanita Sharad Babanne',     subjects:[{code:'AI',type:'lab'}]},
-  {code:'ABK', name:'Ms. Asmita Balasaheb Kalamkar',  subjects:[{code:'FCTC',type:'theory'}]},
-  {code:'GZZ', name:'Ms. Geeta Balkrushna Zaware',    subjects:[{code:'OS',type:'lab'},{code:'DT',type:'tutorial'}]},
-  {code:'AGS', name:'Ms. Ashlesha Gopinath Sawant',   subjects:[{code:'OS',type:'theory'},{code:'OS',type:'lab'}]},
-  {code:'DAG', name:'Mrs. Dipti Ajitkumar Gaikwad',   subjects:[{code:'AI',type:'lab'},{code:'DV',type:'tutorial'}]},
-  {code:'OSD', name:'Omkar Shailendra Dubal',         subjects:[{code:'OS',type:'lab'}]},
-  {code:'ACA', name:'Dr. Amruta Chandrakant Amune',   subjects:[{code:'OS',type:'lab'}]},
-  {code:'KG',  name:'Dr. Kalyani Ghughe',             subjects:[{code:'DV',type:'theory'},{code:'DV',type:'tutorial'}]},
-  {code:'VKS', name:'Mr. Vivekanand Sharma',          subjects:[{code:'IOT',type:'theory'},{code:'IOT',type:'tutorial'}]},
-];
+let _teachers = [], _rooms = [], _subjects = [], _years = [];
+let _selectedSubjects = new Set();
 
 // ── Navigation
 function showPage(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  el.classList.add('active');
-  if (id === 'teachers-ref') renderTeacherGrid();
+  if (el) el.classList.add('active');
+
+  if (id === 'teachers-ref')  renderTeacherGrid();
+  if (id === 'add-teacher')   renderSubjectMultiSelect();
+  if (id === 'add-year')      renderYearList();
+  if (id === 'add-subject')   populateYearDropdown();
 }
 
 // ── Console
@@ -946,17 +635,12 @@ function log(msg, type = 'info') {
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
-
-function clearConsole() {
-  document.getElementById('console').innerHTML = '';
-}
-
+function clearConsole() { document.getElementById('console').innerHTML = ''; }
 function setStatus(state, text) {
   const b = document.getElementById('status-badge');
   b.className = 'status-badge ' + state;
   b.innerHTML = `<span class="pulse"></span>${text}`;
 }
-
 function toast(msg, type = 'info') {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
@@ -964,6 +648,301 @@ function toast(msg, type = 'info') {
   t.textContent = msg;
   c.appendChild(t);
   setTimeout(() => t.remove(), 3500);
+}
+
+// ── Fetch helpers
+async function fetchTeachers() {
+  try {
+    const r = await fetch(`${API}/teachers`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    _teachers = await r.json(); return _teachers;
+  } catch(e) { log('Failed to load teachers: ' + e.message, 'warn'); return []; }
+}
+async function fetchRooms() {
+  try {
+    const r = await fetch(`${API}/rooms`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    _rooms = await r.json(); return _rooms;
+  } catch(e) { log('Failed to load rooms: ' + e.message, 'warn'); return []; }
+}
+async function fetchSubjects() {
+  try {
+    const r = await fetch(`${API}/subjects`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    _subjects = await r.json(); return _subjects;
+  } catch(e) { log('Failed to load subjects: ' + e.message, 'warn'); return []; }
+}
+async function fetchYears() {
+  try {
+    const r = await fetch(`${API}/years`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    _years = await r.json(); return _years;
+  } catch(e) { log('Failed to load years: ' + e.message, 'warn'); return []; }
+}
+
+async function refreshDropdowns() {
+  const [teachers, rooms, subjects, years] = await Promise.all([
+    fetchTeachers(), fetchRooms(), fetchSubjects(), fetchYears()
+  ]);
+
+  const teacherSel = document.getElementById('teacher-select');
+  const prevTeacher = teacherSel.value;
+  teacherSel.innerHTML = '<option value="">Select Teacher…</option>';
+  teachers.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.shortCode;
+    opt.textContent = `${t.shortCode} — ${t.name}`;
+    teacherSel.appendChild(opt);
+  });
+  if (prevTeacher) teacherSel.value = prevTeacher;
+
+  const roomSel = document.getElementById('room-select');
+  const prevRoom = roomSel.value;
+  roomSel.innerHTML = '<option value="">Select Room…</option>';
+  const theoryRooms = rooms.filter(r => r.roomType === 'THEORY');
+  const labRooms    = rooms.filter(r => r.roomType === 'LAB');
+  if (theoryRooms.length) {
+    const grp = document.createElement('optgroup'); grp.label = 'Theory Rooms';
+    theoryRooms.forEach(r => { const o = document.createElement('option'); o.value = r.roomNumber; o.textContent = r.roomNumber; grp.appendChild(o); });
+    roomSel.appendChild(grp);
+  }
+  if (labRooms.length) {
+    const grp = document.createElement('optgroup'); grp.label = 'Lab Rooms';
+    labRooms.forEach(r => { const o = document.createElement('option'); o.value = r.roomNumber; o.textContent = r.roomNumber; grp.appendChild(o); });
+    roomSel.appendChild(grp);
+  }
+  if (prevRoom) roomSel.value = prevRoom;
+
+  const ts = document.getElementById('stat-teachers');
+  const rs = document.getElementById('stat-rooms');
+  const ss = document.getElementById('stat-subjects');
+  const ys = document.getElementById('stat-years');
+  if (ts) ts.textContent = teachers.length || '—';
+  if (rs) rs.textContent = rooms.length    || '—';
+  if (ss) ss.textContent = subjects.length || '—';
+  if (ys) ys.textContent = years.length    || '—';
+
+  const warn = document.getElementById('no-data-warning');
+  if (warn) warn.style.display = (teachers.length === 0 || rooms.length === 0) ? 'flex' : 'none';
+}
+
+// ── Year helpers
+function populateYearDropdown() {
+  const sel = document.getElementById('s-year');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = _years.length === 0
+    ? '<option value="">No years found — add one first</option>'
+    : '<option value="">Select year…</option>';
+  _years.forEach(y => {
+    const o = document.createElement('option');
+    o.value = y.name;
+    o.textContent = y.name;
+    sel.appendChild(o);
+  });
+  if (prev) sel.value = prev;
+}
+
+function renderYearList() {
+  const grid = document.getElementById('year-list');
+  if (!grid) return;
+  if (_years.length === 0) {
+    grid.innerHTML = `<div style="color:var(--muted);font-size:12.5px;font-weight:600;grid-column:1/-1">No years added yet.</div>`;
+    return;
+  }
+  grid.innerHTML = _years.map(y => `
+    <div class="year-card">
+      <div>
+        <div class="year-name">${y.name}</div>
+        <div class="year-id">ID: ${y.id}</div>
+      </div>
+      <button class="btn btn-outline-danger" style="font-size:11px;padding:5px 10px;" onclick="deleteYear(${y.id}, '${y.name}')">✕</button>
+    </div>
+  `).join('');
+}
+
+function setYearQuickPick(name) {
+  document.getElementById('y-name').value = name;
+}
+
+async function submitAddYear() {
+  const name   = document.getElementById('y-name').value.trim().toUpperCase();
+  const status = document.getElementById('add-year-status');
+  if (!name) { toast('Enter a year name', 'error'); return; }
+
+  const btn = document.getElementById('add-year-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…';
+  btn.disabled = true;
+  status.textContent = '';
+
+  try {
+    const r = await fetch(`${API}/years`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name})
+    });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.detail || err.message || `HTTP ${r.status}`);
+    }
+    toast(`Year "${name}" added`, 'success');
+    log(`Year added: ${name}`, 'success');
+    document.getElementById('y-name').value = '';
+    await fetchYears();
+    renderYearList();
+    populateYearDropdown();
+    const ys = document.getElementById('stat-years');
+    if (ys) ys.textContent = _years.length;
+  } catch(e) {
+    toast('Failed: ' + e.message, 'error');
+    status.textContent = '✗ ' + e.message;
+    status.style.color = '#c0392b';
+  }
+  btn.innerHTML = '✓ Add Year';
+  btn.disabled = false;
+}
+
+async function deleteYear(id, name) {
+  if (!confirm(`Delete year "${name}"? This cannot be undone.`)) return;
+  try {
+    const r = await fetch(`${API}/years/${id}`, {method: 'DELETE'});
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    toast(`Year "${name}" deleted`, 'success');
+    await fetchYears();
+    renderYearList();
+    populateYearDropdown();
+  } catch(e) {
+    toast('Delete failed: ' + e.message, 'error');
+  }
+}
+
+// ── Subject multi-select
+function renderSubjectMultiSelect() {
+  const container = document.getElementById('t-subjects-list');
+  if (!container) return;
+  if (_subjects.length === 0) {
+    container.innerHTML = `<div style="padding:14px 16px;color:var(--muted);font-size:12.5px;font-weight:600;">No subjects found. Seed the database first.</div>`;
+    return;
+  }
+  container.innerHTML = _subjects.map(s => `
+    <div class="multi-select-option ${_selectedSubjects.has(s.id) ? 'selected' : ''}" onclick="toggleSubjectSelection(${s.id}, this)">
+      <span class="check-icon">${_selectedSubjects.has(s.id) ? '✓' : ''}</span>
+      <span>${s.code} — ${s.name}</span>
+    </div>
+  `).join('');
+}
+
+function toggleSubjectSelection(id, el) {
+  if (_selectedSubjects.has(id)) { _selectedSubjects.delete(id); el.classList.remove('selected'); el.querySelector('.check-icon').textContent = ''; }
+  else { _selectedSubjects.add(id); el.classList.add('selected'); el.querySelector('.check-icon').textContent = '✓'; }
+}
+
+document.addEventListener('change', function(e) {
+  if (e.target.type === 'checkbox' && e.target.closest('.checkbox-item')) {
+    e.target.closest('.checkbox-item').classList.toggle('checked', e.target.checked);
+  }
+});
+
+// ── Add Teacher
+async function submitAddTeacher() {
+  const name = document.getElementById('t-name').value.trim();
+  const code = document.getElementById('t-code').value.trim().toUpperCase();
+  const status = document.getElementById('add-teacher-status');
+  if (!name || !code) { toast('Please fill in Name and Short Code', 'error'); return; }
+  const selectedTypes = Array.from(document.querySelectorAll('#t-lecture-types input[type="checkbox"]:checked')).map(cb => cb.value);
+  const btn = document.getElementById('add-teacher-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
+  try {
+    const r = await fetch(`${API}/teachers`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, shortCode:code, subjectIds:Array.from(_selectedSubjects), lectureTypes:selectedTypes})});
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
+    toast(`Teacher ${code} added successfully`, 'success');
+    log(`Teacher added: ${code} — ${name}`, 'success');
+    clearTeacherForm(); await refreshDropdowns();
+  } catch(e) {
+    toast('Failed to add teacher: ' + e.message, 'error');
+    log('Add teacher error: ' + e.message, 'error');
+    status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
+  }
+  btn.innerHTML = '✓ Add Teacher'; btn.disabled = false;
+}
+
+function clearTeacherForm() {
+  document.getElementById('t-name').value = '';
+  document.getElementById('t-code').value = '';
+  _selectedSubjects.clear();
+  document.querySelectorAll('#t-lecture-types input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.closest('.checkbox-item').classList.remove('checked'); });
+  document.getElementById('add-teacher-status').textContent = '';
+  renderSubjectMultiSelect();
+}
+
+// ── Add Room
+async function submitAddRoom() {
+  const number = document.getElementById('r-number').value.trim();
+  const type   = document.getElementById('r-type').value;
+  const cap    = document.getElementById('r-capacity').value;
+  const status = document.getElementById('add-room-status');
+  if (!number || !type) { toast('Please fill in Room Number and Type', 'error'); return; }
+  const btn = document.getElementById('add-room-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
+  try {
+    const body = {roomNumber:number, roomType:type};
+    if (cap) body.capacity = parseInt(cap, 10);
+    const r = await fetch(`${API}/rooms`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
+    toast(`Room ${number} (${type}) added`, 'success');
+    log(`Room added: ${number} — ${type}`, 'success');
+    clearRoomForm(); await refreshDropdowns();
+  } catch(e) {
+    toast('Failed to add room: ' + e.message, 'error');
+    status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
+  }
+  btn.innerHTML = '✓ Add Room'; btn.disabled = false;
+}
+
+function clearRoomForm() {
+  document.getElementById('r-number').value = '';
+  document.getElementById('r-type').value = '';
+  document.getElementById('r-capacity').value = '';
+  document.getElementById('add-room-status').textContent = '';
+}
+
+// ── Add Subject  (now sends 'year' field)
+async function submitAddSubject() {
+  const name   = document.getElementById('s-name').value.trim();
+  const code   = document.getElementById('s-code').value.trim().toUpperCase();
+  const year   = document.getElementById('s-year').value;
+  const status = document.getElementById('add-subject-status');
+  if (!name || !code) { toast('Please fill in Subject Name and Code', 'error'); return; }
+  if (!year) { toast('Please select an Academic Year', 'error'); return; }
+  const hasTheory   = document.querySelector('#sltype-theory input').checked;
+  const hasLab      = document.querySelector('#sltype-lab input').checked;
+  const hasTutorial = document.querySelector('#sltype-tutorial input').checked;
+  const btn = document.getElementById('add-subject-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
+  try {
+    const r = await fetch(`${API}/subjects`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, code, year, hasTheory, hasLab, hasTutorial})});
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
+    toast(`Subject ${code} added successfully`, 'success');
+    log(`Subject added: ${code} — ${name} (${year})`, 'success');
+    clearSubjectForm(); await fetchSubjects();
+  } catch(e) {
+    toast('Failed to add subject: ' + e.message, 'error');
+    log('Add subject error: ' + e.message, 'error');
+    status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
+  }
+  btn.innerHTML = '✓ Add Subject'; btn.disabled = false;
+}
+
+function clearSubjectForm() {
+  document.getElementById('s-name').value = '';
+  document.getElementById('s-code').value = '';
+  document.getElementById('s-year').value = '';
+  ['sltype-theory','sltype-lab','sltype-tutorial'].forEach(id => {
+    const el = document.getElementById(id);
+    el.querySelector('input').checked = false;
+    el.classList.remove('checked');
+  });
+  document.getElementById('add-subject-status').textContent = '';
 }
 
 // ── Seed
@@ -976,42 +955,26 @@ async function runSeed() {
     log('✓ ' + (d.message || JSON.stringify(d)), 'success');
     setStatus('ready', 'READY');
     toast('Database seeded successfully', 'success');
+    await refreshDropdowns();
+    renderYearList();
+    populateYearDropdown();
   } catch(e) {
-    log('Error: ' + e.message, 'error');
-    setStatus('error', 'ERROR');
-    toast('Seed failed — is backend running?', 'error');
+    log('Error: ' + e.message, 'error'); setStatus('error', 'ERROR'); toast('Seed failed — is backend running?', 'error');
   }
 }
 
 // ── Generate
 async function generateTimetable() {
   const btn = document.getElementById('gen-btn');
-  btn.innerHTML = '<span class="spinner"></span> Running DFS…';
-  btn.disabled = true;
-  setStatus('running', 'RUNNING');
-  log('Starting DFS backtracking scheduler…');
-  log('Expanding sessions for 7 divisions × 9 subjects…');
-  log('Labs sorted first (MRV heuristic)…');
+  btn.innerHTML = '<span class="spinner"></span> Running DFS…'; btn.disabled = true;
+  setStatus('running', 'RUNNING'); log('Starting DFS backtracking scheduler…');
   try {
     const r = await fetch(`${API}/generate-timetable`, {method:'POST'});
     const d = await r.json();
-    if (d.error) {
-      log('✗ ' + d.error, 'error');
-      setStatus('error', 'ERROR');
-      toast(d.error, 'error');
-    } else {
-      log('✓ ' + d.message, 'success');
-      log('All constraints satisfied — conflict-free timetable saved', 'success');
-      setStatus('ready', 'READY');
-      toast(d.message, 'success');
-    }
-  } catch(e) {
-    log('Error: ' + e.message, 'error');
-    setStatus('error', 'ERROR');
-    toast('Generation failed — is backend running?', 'error');
-  }
-  btn.innerHTML = '✦ Generate Timetable';
-  btn.disabled = false;
+    if (d.error) { log('✗ ' + d.error, 'error'); setStatus('error', 'ERROR'); toast(d.error, 'error'); }
+    else { log('✓ ' + d.message, 'success'); log('All constraints satisfied — conflict-free timetable saved', 'success'); setStatus('ready', 'READY'); toast(d.message, 'success'); }
+  } catch(e) { log('Error: ' + e.message, 'error'); setStatus('error', 'ERROR'); toast('Generation failed — is backend running?', 'error'); }
+  btn.innerHTML = '✦ Generate Timetable'; btn.disabled = false;
 }
 
 // ── Grid builder
@@ -1019,8 +982,7 @@ function buildTimetableGrid(entries) {
   const grid = {};
   DAYS_ORDER.forEach(d => { grid[d] = {}; });
   entries.forEach(e => {
-    const day = e.timeslot?.day;
-    const st  = e.timeslot?.startTime;
+    const day = e.timeslot?.day, st = e.timeslot?.startTime;
     if (!day || !st) return;
     if (!grid[day]) grid[day] = {};
     grid[day][st] = e;
@@ -1030,142 +992,128 @@ function buildTimetableGrid(entries) {
 
 function renderCell(e) {
   if (!e) return '<div class="cell-empty"></div>';
-  const cls     = (e.lectureType || '').toLowerCase();
-  const subj    = e.subject?.code || e.subject?.name || '?';
-  const subjFull= e.subject?.name || '';
+  const cls   = (e.lectureType||'').toLowerCase();
+  const subj  = e.subject?.code || e.subject?.name || '?';
+  const subjF = e.subject?.name || '';
   const teacher = e.teacher?.shortCode || '';
   const room    = e.room?.roomNumber || '';
   const batch   = e.batch?.name ? `<span style="font-size:9px;color:#9b6dd6;font-weight:700">${e.batch.name}</span>` : '';
-  return `<div class="cell-entry ${cls}" title="${subjFull} — ${teacher} — ${room}">
+  return `<div class="cell-entry ${cls}" title="${subjF} — ${teacher} — ${room}">
     <div class="cell-subject">${subj}</div>
     <div class="cell-teacher">${teacher}</div>
-    <div class="cell-room">${room}</div>
-    ${batch}
+    <div class="cell-room">${room}</div>${batch}
   </div>`;
 }
 
 function renderTimetableHTML(entries) {
   if (!entries || entries.length === 0) {
-    return `<div class="empty-state">
-      <div class="empty-icon">📭</div>
-      <h3>No entries found</h3>
-      <p>Generate a timetable first, or select a valid option above.</p>
-    </div>`;
+    return `<div class="empty-state"><div class="empty-icon">📭</div><h3>No entries found</h3><p>Generate a timetable first, or select a valid option above.</p></div>`;
   }
-
   const grid = buildTimetableGrid(entries);
-
-  let html = `<div class="timetable-wrapper"><table class="tt"><thead><tr>
-    <th>Slot</th>`;
-
-  DAYS_ORDER.forEach(d => {
-    html += `<th class="day-head">${d.slice(0,3)}</th>`;
-  });
+  let html = `<div class="timetable-wrapper"><table class="tt"><thead><tr><th>Slot</th>`;
+  DAYS_ORDER.forEach(d => { html += `<th class="day-head">${d.slice(0,3)}</th>`; });
   html += `</tr></thead><tbody>`;
-
   SLOT_TIMES.forEach(st => {
     const lbl = SLOT_LABELS[st] + '–' + SLOT_LABELS[st === 1600 ? 1700 : st + 100];
-    const isLunch = (st === 1300);
     html += `<tr><td>${lbl}</td>`;
     DAYS_ORDER.forEach(day => {
       const e = grid[day]?.[st];
-      if (isLunch && !e) {
-        html += `<td><div class="cell-entry lunch"><div class="cell-teacher" style="color:var(--muted-light);font-size:10px;font-weight:700;">LUNCH BREAK</div></div></td>`;
-      } else {
-        html += `<td>${renderCell(e)}</td>`;
-      }
+      if (st === 1300 && !e) html += `<td><div class="cell-entry lunch"><div class="cell-teacher" style="color:var(--muted-light);font-size:10px;font-weight:700;">LUNCH BREAK</div></div></td>`;
+      else html += `<td>${renderCell(e)}</td>`;
     });
     html += `</tr>`;
   });
-
   html += `</tbody></table></div>`;
   return html;
 }
 
-// ── Division TT
+// ── TT loaders
 async function loadDivisionTT() {
-  const div = document.getElementById('div-select').value;
-  if (!div) return;
+  const div = document.getElementById('div-select').value; if (!div) return;
   const c = document.getElementById('div-tt-container');
   c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
-  try {
-    const r = await fetch(`${API}/timetable/division/${div}`);
-    c.innerHTML = renderTimetableHTML(await r.json());
-  } catch(e) {
-    c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
-  }
+  try { const r = await fetch(`${API}/timetable/division/${div}`); c.innerHTML = renderTimetableHTML(await r.json()); }
+  catch(e) { c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`; }
 }
 
-// ── Batch options
 async function loadBatchOptions() {
   const div = document.getElementById('batch-div-select').value;
   const sel = document.getElementById('batch-select');
-  sel.innerHTML = '<option value="">Select Batch…</option>';
-  if (!div) return;
+  sel.innerHTML = '<option value="">Select Batch…</option>'; if (!div) return;
   try {
-    const r = await fetch(`${API}/batches/${div}`);
-    const batches = await r.json();
-    batches.forEach(b => { sel.innerHTML += `<option>${b.name}</option>`; });
-  } catch(e) {
-    ['B1','B2','B3'].forEach(n => { sel.innerHTML += `<option>${div}-${n}</option>`; });
-  }
+    const r = await fetch(`${API}/batches/${div}`); const batches = await r.json();
+    if (batches.length > 0) batches.forEach(b => { sel.innerHTML += `<option>${b.name}</option>`; });
+    else ['B1','B2','B3'].forEach(n => { sel.innerHTML += `<option>${div}-${n}</option>`; });
+  } catch(e) { ['B1','B2','B3'].forEach(n => { sel.innerHTML += `<option>${div}-${n}</option>`; }); }
 }
 
-// ── Batch TT
 async function loadBatchTT() {
-  const batch = document.getElementById('batch-select').value;
-  if (!batch) return;
+  const batch = document.getElementById('batch-select').value; if (!batch) return;
   const c = document.getElementById('batch-tt-container');
   c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
-  try {
-    const r = await fetch(`${API}/timetable/batch/${encodeURIComponent(batch)}`);
-    c.innerHTML = renderTimetableHTML(await r.json());
-  } catch(e) {
-    c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
-  }
+  try { const r = await fetch(`${API}/timetable/batch/${encodeURIComponent(batch)}`); c.innerHTML = renderTimetableHTML(await r.json()); }
+  catch(e) { c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`; }
 }
 
-// ── Teacher TT
 async function loadTeacherTT() {
-  const code = document.getElementById('teacher-select').value;
-  if (!code) return;
+  const code = document.getElementById('teacher-select').value; if (!code) return;
   const c = document.getElementById('teacher-tt-container');
   c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
-  try {
-    const r = await fetch(`${API}/timetable/teacher/${code}`);
-    c.innerHTML = renderTimetableHTML(await r.json());
-  } catch(e) {
-    c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
-  }
+  try { const r = await fetch(`${API}/timetable/teacher/${code}`); c.innerHTML = renderTimetableHTML(await r.json()); }
+  catch(e) { c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`; }
 }
 
-// ── Room TT
 async function loadRoomTT() {
-  const room = document.getElementById('room-select').value;
-  if (!room) return;
+  const room = document.getElementById('room-select').value; if (!room) return;
   const c = document.getElementById('room-tt-container');
   c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
-  try {
-    const r = await fetch(`${API}/timetable/room/${room}`);
-    c.innerHTML = renderTimetableHTML(await r.json());
-  } catch(e) {
-    c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
-  }
+  try { const r = await fetch(`${API}/timetable/room/${room}`); c.innerHTML = renderTimetableHTML(await r.json()); }
+  catch(e) { c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`; }
 }
 
-// ── Teacher grid
-function renderTeacherGrid() {
+// ── Faculty grid
+async function renderTeacherGrid() {
   const grid = document.getElementById('teacher-grid');
-  grid.innerHTML = TEACHERS_DATA.map(t => `
-    <div class="teacher-card">
-      <div class="teacher-code">${t.code}</div>
+  grid.innerHTML = `<div style="padding:40px;text-align:center;color:var(--muted);grid-column:1/-1"><span class="spinner"></span> Loading faculty…</div>`;
+  if (_teachers.length === 0) await fetchTeachers();
+  if (_teachers.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👤</div><h3>No Faculty Found</h3><p>Seed the database or add teachers via the sidebar.</p></div>`;
+    return;
+  }
+  grid.innerHTML = _teachers.map(t => {
+    const subjectTags = (t.subjects||[]).map(ts => {
+      const typeClass = (ts.lectureType||'THEORY').toLowerCase();
+      const subjectCode = ts.subject?.code || ts.subjectId || '';
+      return `<span class="subject-tag ${typeClass}">${subjectCode} ${ts.lectureType||''}</span>`;
+    }).join('');
+    return `<div class="teacher-card" onclick="jumpToTeacherTT('${t.shortCode}')">
+      <div class="teacher-code">${t.shortCode}</div>
       <div class="teacher-name">${t.name}</div>
-      <div class="teacher-subjects">
-        ${t.subjects.map(s => `<span class="subject-tag ${s.type}">${s.code} ${s.type}</span>`).join('')}
-      </div>
-    </div>
-  `).join('');
+      <div class="teacher-subjects">${subjectTags||'<span style="font-size:11px;color:var(--muted-light);font-weight:600;">No subjects assigned</span>'}</div>
+    </div>`;
+  }).join('');
 }
+
+function jumpToTeacherTT(code) {
+  const item = document.querySelector('.sidebar-item[onclick*="teacher-tt"]');
+  if (item) { showPage('teacher-tt', item); document.getElementById('teacher-select').value = code; loadTeacherTT(); }
+}
+
+// ── Init
+(async function init() {
+  log('Connecting to backend…', 'info');
+  try {
+    await refreshDropdowns();
+    populateYearDropdown();
+    if (_teachers.length > 0 || _rooms.length > 0) {
+      log(`Loaded ${_teachers.length} teachers, ${_rooms.length} rooms, ${_subjects.length} subjects, ${_years.length} years`, 'success');
+      setStatus('ready', 'READY');
+    } else {
+      log('No data found — seed the database or add data manually', 'warn');
+      setStatus('idle', 'IDLE');
+    }
+  } catch(e) { log('Backend unreachable: ' + e.message, 'error'); setStatus('error', 'ERROR'); }
+})();
 </script>
 </body>
 </html>
