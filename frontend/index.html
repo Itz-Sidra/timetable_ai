@@ -18,142 +18,64 @@
     --text:       #2c3250;
     --muted:      #8891ab;
     --muted-light:#b0b8cf;
-
     --theory-bg:  #fef3e2;
     --theory-border: #f5a623;
     --theory-text: #7a4f1a;
-
     --lab-bg:     #e6f4f0;
     --lab-border: #3aab8a;
     --lab-text:   #1a5c47;
-
     --tutorial-bg:  #f0eafa;
     --tutorial-border: #9b6dd6;
     --tutorial-text:   #4b2a7a;
-
     --lunch-bg:   #fafafa;
     --lunch-border: #d0d4e0;
-
     --font: 'Nunito', sans-serif;
     --font-body: 'Nunito Sans', sans-serif;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    font-size: 14px;
-  }
-
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 1px 4px rgba(44,50,80,0.06);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; font-size: 14px; }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 4px rgba(44,50,80,0.06); position: sticky; top: 0; z-index: 100; }
   .logo { display: flex; align-items: center; gap: 12px; }
-
-  .logo-mark {
-    width: 38px; height: 38px;
-    background: linear-gradient(135deg, #4a7fd4, #7b52d4);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font);
-    font-size: 14px; font-weight: 800; color: #fff;
-    letter-spacing: -0.5px;
-    box-shadow: 0 2px 8px rgba(74,127,212,0.35);
-  }
-
+  .logo-mark { width: 38px; height: 38px; background: linear-gradient(135deg, #4a7fd4, #7b52d4); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--font); font-size: 14px; font-weight: 800; color: #fff; letter-spacing: -0.5px; box-shadow: 0 2px 8px rgba(74,127,212,0.35); }
   .logo-text h1 { font-family: var(--font); font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
   .logo-text p  { font-size: 11.5px; color: var(--muted); font-weight: 500; margin-top: 1px; }
-
   .header-actions { display: flex; gap: 8px; align-items: center; }
-
-  .btn {
-    padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--border);
-    background: var(--surface); color: var(--text);
-    font-family: var(--font); font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all .15s ease;
-    display: inline-flex; align-items: center; gap: 6px;
-    text-decoration: none; white-space: nowrap;
-  }
+  .btn { padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s ease; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; white-space: nowrap; }
   .btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-
   .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(74,127,212,0.3); }
   .btn-primary:hover { background: #3a6bbf; border-color: #3a6bbf; color: #fff; box-shadow: 0 4px 14px rgba(74,127,212,0.4); }
-
   .btn-outline-danger { border-color: #f5a0a0; color: #c0392b; background: #fff8f8; }
   .btn-outline-danger:hover { background: #fde8e8; border-color: #c0392b; color: #c0392b; }
-
   .btn-success { background: #1a7a45; border-color: #1a7a45; color: #fff; box-shadow: 0 2px 8px rgba(26,122,69,0.3); }
   .btn-success:hover { background: #155e36; border-color: #155e36; color: #fff; }
-
-  .status-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 5px 12px; border-radius: 20px;
-    font-size: 11px; font-family: var(--font); font-weight: 700;
-    letter-spacing: 0.5px; text-transform: uppercase;
-  }
+  .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-family: var(--font); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
   .status-badge.ready   { background: #e6f7ee; border: 1.5px solid #a8e6c3; color: #1a7a45; }
   .status-badge.running { background: #fff8e6; border: 1.5px solid #f5d48a; color: #8a6200; }
   .status-badge.error   { background: #fde8e8; border: 1.5px solid #f5a0a0; color: #c0392b; }
   .status-badge.idle    { background: var(--bg); border: 1.5px solid var(--border); color: var(--muted); }
-
   .pulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.4s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.65)} }
-
   .app { display: grid; grid-template-columns: 240px 1fr; height: calc(100vh - 64px); }
-
   .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; overflow-y: auto; }
   .sidebar-section { margin-bottom: 4px; }
-
-  .sidebar-label {
-    font-size: 10px; font-family: var(--font); font-weight: 800;
-    letter-spacing: 1.2px; text-transform: uppercase;
-    color: var(--muted-light); padding: 0 18px 6px; display: block;
-  }
-
-  .sidebar-item {
-    padding: 9px 18px; display: flex; align-items: center; gap: 10px;
-    font-size: 13.5px; font-weight: 600; cursor: pointer;
-    transition: all .12s; border-left: 3px solid transparent;
-    color: var(--muted); user-select: none;
-  }
+  .sidebar-label { font-size: 10px; font-family: var(--font); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted-light); padding: 0 18px 6px; display: block; }
+  .sidebar-item { padding: 9px 18px; display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all .12s; border-left: 3px solid transparent; color: var(--muted); user-select: none; }
   .sidebar-item:hover { background: var(--bg); color: var(--text); }
   .sidebar-item.active { background: var(--accent-soft); border-left-color: var(--accent); color: var(--accent); }
   .sidebar-item .icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; background: var(--bg); flex-shrink: 0; }
   .sidebar-item.active .icon { background: var(--accent-soft); }
-
   .sidebar-divider { height: 1px; background: var(--border-light); margin: 10px 18px; }
-
   .content { overflow-y: auto; padding: 28px 36px; background: var(--bg); }
-
   .page { display: none; }
   .page.active { display: block; }
-
   .page-header { margin-bottom: 24px; }
   .page-header h2 { font-family: var(--font); font-size: 22px; font-weight: 800; letter-spacing: -0.4px; color: var(--text); margin-bottom: 4px; }
   .page-header p { color: var(--muted); font-size: 13px; font-weight: 500; }
-
   .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 24px; }
-
   .stat-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 16px 18px; transition: border-color .2s, box-shadow .2s; }
   .stat-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(74,127,212,0.1); }
-
   .stat-value { font-family: var(--font); font-size: 30px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
   .stat-label { font-size: 11.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
   .console-section { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 1px 4px rgba(44,50,80,0.04); }
   .console-header { padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: #f8f9fd; }
   .console-title { font-family: var(--font); font-size: 11px; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 7px; text-transform: uppercase; letter-spacing: 0.8px; }
@@ -162,74 +84,49 @@
   .console-body .log-line.warn    { color: #d4890a; }
   .console-body .log-line.error   { color: #c0392b; }
   .console-body .log-line.success { color: #1a7a45; }
-
   .timetable-controls { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
-
   .select-styled { padding: 9px 14px; background: var(--card); border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; min-width: 150px; transition: border-color .15s; }
   .select-styled:focus { outline: none; border-color: var(--accent); }
-
   .timetable-wrapper { overflow-x: auto; border-radius: 12px; border: 1.5px solid var(--border); box-shadow: 0 2px 10px rgba(44,50,80,0.06); background: white; }
-
   table.tt { width: 100%; border-collapse: collapse; font-size: 11.5px; }
   table.tt th { background: #f0f3fa; padding: 11px 8px; text-align: center; font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--border); border-right: 1px solid var(--border-light); white-space: nowrap; min-width: 110px; }
   table.tt th:first-child { background: #eaecf5; min-width: 88px; color: var(--text); }
   table.tt th.day-head { background: #e8ecf8; color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 1px; }
   table.tt td { border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); padding: 0; vertical-align: top; height: 64px; }
   table.tt td:first-child { background: #f8f9fd; padding: 0 10px; text-align: center; font-family: var(--font); font-size: 10.5px; font-weight: 700; color: var(--muted); white-space: nowrap; vertical-align: middle; border-right: 2px solid var(--border); }
-
   .cell-empty { height: 64px; background: repeating-linear-gradient(-45deg, #fafbfd, #fafbfd 6px, #f5f7fc 6px, #f5f7fc 7px); }
-
   .cell-entry { padding: 6px 8px; height: 100%; min-height: 64px; display: flex; flex-direction: column; justify-content: center; gap: 1px; cursor: pointer; transition: filter .12s, opacity .12s; }
   .cell-entry:hover { filter: brightness(0.96); }
   .cell-entry.theory   { background: var(--theory-bg);   border-left: 3.5px solid var(--theory-border); }
   .cell-entry.lab      { background: var(--lab-bg);      border-left: 3.5px solid var(--lab-border); }
   .cell-entry.tutorial { background: var(--tutorial-bg); border-left: 3.5px solid var(--tutorial-border); }
   .cell-entry.lunch    { background: #f9fafc; border-left: 3.5px solid var(--lunch-border); justify-content: center; align-items: flex-start; }
-
   .cell-subject { font-family: var(--font); font-weight: 700; font-size: 11px; line-height: 1.3; }
   .cell-entry.theory   .cell-subject { color: var(--theory-text); }
   .cell-entry.lab      .cell-subject { color: var(--lab-text); }
   .cell-entry.tutorial .cell-subject { color: var(--tutorial-text); }
-
   .cell-teacher { font-size: 10px; color: var(--muted); font-weight: 600; font-family: var(--font); }
   .cell-room    { font-size: 9.5px; font-family: var(--font); font-weight: 700; padding: 1px 5px; border-radius: 4px; background: rgba(255,255,255,0.7); color: var(--muted); width: fit-content; margin-top: 2px; border: 1px solid rgba(0,0,0,0.06); }
   .cell-entry.theory   .cell-room { color: var(--theory-text); background: rgba(245,166,35,0.12); }
   .cell-entry.lab      .cell-room { color: var(--lab-text); background: rgba(58,171,138,0.12); }
   .cell-entry.tutorial .cell-room { color: var(--tutorial-text); background: rgba(155,109,214,0.12); }
-
   .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(74,127,212,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin .65s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   #toast-container { position: fixed; bottom: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
   .toast { padding: 11px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; max-width: 300px; animation: slideIn .22s ease; border: 1.5px solid; font-family: var(--font); box-shadow: 0 4px 16px rgba(44,50,80,0.12); }
   .toast.success { background: #e6f7ee; border-color: #a8e6c3; color: #1a7a45; }
   .toast.error   { background: #fde8e8; border-color: #f5a0a0; color: #c0392b; }
   .toast.info    { background: var(--card); border-color: var(--border); color: var(--text); }
   @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
-
   .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); padding: 4px 10px; background: var(--card); border-radius: 20px; border: 1.5px solid var(--border); font-weight: 600; }
   .legend-dot { width: 9px; height: 9px; border-radius: 3px; }
   .legend-dot.theory   { background: var(--theory-border); }
   .legend-dot.lab      { background: var(--lab-border); }
   .legend-dot.tutorial { background: var(--tutorial-border); }
-
-  /* ── FACULTY CARDS ── */
   .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; margin-bottom: 24px; }
-
-  .teacher-card {
-    background: var(--card);
-    border: 1.5px solid var(--border-light);
-    border-radius: 12px;
-    padding: 16px 18px 12px;
-    transition: all .18s;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
+  .teacher-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 16px 18px 12px; transition: all .18s; position: relative; display: flex; flex-direction: column; gap: 0; }
   .teacher-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(74,127,212,0.1); transform: translateY(-1px); }
-
   .teacher-card-top { cursor: pointer; }
   .teacher-code { font-family: var(--font); font-size: 22px; font-weight: 800; color: var(--accent); margin-bottom: 2px; letter-spacing: -0.5px; }
   .teacher-name { font-size: 12.5px; color: var(--muted); font-weight: 600; }
@@ -238,109 +135,31 @@
   .subject-tag.theory   { border-color: var(--theory-border); color: var(--theory-text); background: var(--theory-bg); }
   .subject-tag.lab      { border-color: var(--lab-border); color: var(--lab-text); background: var(--lab-bg); }
   .subject-tag.tutorial { border-color: var(--tutorial-border); color: var(--tutorial-text); background: var(--tutorial-bg); }
-
-  /* card action bar */
-  .card-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-light);
-  }
-  .card-btn {
-    flex: 1;
-    padding: 6px 10px;
-    border-radius: 7px;
-    border: 1.5px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-family: var(--font);
-    font-size: 11.5px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all .14s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-  }
+  .card-actions { display: flex; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-light); }
+  .card-btn { flex: 1; padding: 6px 10px; border-radius: 7px; border: 1.5px solid var(--border); background: var(--surface); color: var(--muted); font-family: var(--font); font-size: 11.5px; font-weight: 700; cursor: pointer; transition: all .14s; display: flex; align-items: center; justify-content: center; gap: 5px; }
   .card-btn.edit:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
   .card-btn.delete:hover { border-color: #e05252; color: #c0392b; background: #fde8e8; }
-
-  /* ── MODAL ── */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 500;
-    background: rgba(28,32,58,0.45);
-    backdrop-filter: blur(3px);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity .2s;
-  }
+  .modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(28,32,58,0.45); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-  .modal-box {
-    background: var(--surface);
-    border-radius: 16px;
-    border: 1.5px solid var(--border);
-    width: 520px;
-    max-width: calc(100vw - 32px);
-    max-height: calc(100vh - 60px);
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(28,32,58,0.22);
-    transform: translateY(16px) scale(0.98);
-    transition: transform .22s cubic-bezier(.34,1.26,.64,1);
-    padding: 28px 30px;
-  }
+  .modal-box { background: var(--surface); border-radius: 16px; border: 1.5px solid var(--border); width: 520px; max-width: calc(100vw - 32px); max-height: calc(100vh - 60px); overflow-y: auto; box-shadow: 0 20px 60px rgba(28,32,58,0.22); transform: translateY(16px) scale(0.98); transition: transform .22s cubic-bezier(.34,1.26,.64,1); padding: 28px 30px; }
   .modal-overlay.open .modal-box { transform: none; }
-
-  .modal-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 22px;
-  }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
   .modal-title { font-family: var(--font); font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
-  .modal-close {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: 1.5px solid var(--border); background: var(--surface);
-    color: var(--muted); font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .14s; font-family: var(--font); font-weight: 700;
-  }
+  .modal-close { width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .14s; font-family: var(--font); font-weight: 700; }
   .modal-close:hover { border-color: #e05252; color: #c0392b; background: #fde8e8; }
-
-  .modal-section-label {
-    font-family: var(--font); font-size: 10.5px; font-weight: 800;
-    letter-spacing: 1px; text-transform: uppercase;
-    color: var(--muted-light); margin: 18px 0 8px;
-  }
+  .modal-section-label { font-family: var(--font); font-size: 10.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--muted-light); margin: 18px 0 8px; }
   .modal-section-label:first-of-type { margin-top: 0; }
-
   .modal-footer { display: flex; gap: 8px; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-light); }
-
-  /* confirm delete dialog */
-  .confirm-box {
-    background: var(--surface);
-    border-radius: 14px;
-    border: 1.5px solid var(--border);
-    width: 380px;
-    max-width: calc(100vw - 32px);
-    padding: 28px 26px;
-    box-shadow: 0 20px 60px rgba(28,32,58,0.22);
-    transform: translateY(16px) scale(0.98);
-    transition: transform .22s cubic-bezier(.34,1.26,.64,1);
-    text-align: center;
-  }
+  .confirm-box { background: var(--surface); border-radius: 14px; border: 1.5px solid var(--border); width: 380px; max-width: calc(100vw - 32px); padding: 28px 26px; box-shadow: 0 20px 60px rgba(28,32,58,0.22); transform: translateY(16px) scale(0.98); transition: transform .22s cubic-bezier(.34,1.26,.64,1); text-align: center; }
   .modal-overlay.open .confirm-box { transform: none; }
   .confirm-icon { font-size: 32px; margin-bottom: 12px; }
   .confirm-title { font-family: var(--font); font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
   .confirm-desc { font-size: 12.5px; color: var(--muted); font-weight: 600; line-height: 1.6; margin-bottom: 22px; }
   .confirm-actions { display: flex; gap: 8px; justify-content: center; }
-
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); background: var(--card); border-radius: 12px; border: 1.5px dashed var(--border); }
   .empty-state .empty-icon { font-size: 40px; margin-bottom: 14px; }
   .empty-state h3 { font-family: var(--font); font-size: 15px; color: var(--text); margin-bottom: 6px; font-weight: 700; }
   .empty-state p { font-size: 13px; font-weight: 500; }
-
-  /* ── FORM ── */
   .form-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 14px; padding: 28px 30px; max-width: 560px; box-shadow: 0 2px 10px rgba(44,50,80,0.05); }
   .form-group { margin-bottom: 18px; }
   .form-label { display: block; font-family: var(--font); font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 7px; letter-spacing: 0.3px; text-transform: uppercase; }
@@ -357,9 +176,7 @@
   .form-hint { font-size: 11.5px; color: var(--muted); margin-top: 5px; font-weight: 500; }
   .form-divider { height: 1px; background: var(--border-light); margin: 22px 0; }
   .form-actions { display: flex; gap: 10px; align-items: center; margin-top: 24px; }
-
   .warning-banner { background: #fff8e6; border: 1.5px solid #f5d48a; color: #8a6200; border-radius: 10px; padding: 12px 16px; font-size: 12.5px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-family: var(--font); }
-
   .multi-select-container { border: 1.5px solid var(--border); border-radius: 8px; background: var(--surface); max-height: 160px; overflow-y: auto; transition: border-color .15s; }
   .multi-select-container:focus-within { border-color: var(--accent); }
   .multi-select-option { padding: 8px 14px; cursor: pointer; font-size: 13px; font-weight: 600; font-family: var(--font); color: var(--text); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 8px; transition: background .1s; user-select: none; }
@@ -368,18 +185,14 @@
   .multi-select-option.selected { background: var(--accent-soft); color: var(--accent); }
   .multi-select-option .check-icon { width: 16px; height: 16px; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; transition: all .1s; }
   .multi-select-option.selected .check-icon { background: var(--accent); border-color: var(--accent); color: white; }
-
-  /* Year pills */
   .year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 24px; }
   .year-card { background: var(--card); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; }
   .year-name { font-family: var(--font); font-size: 20px; font-weight: 800; color: var(--accent); }
   .year-id   { font-size: 11px; color: var(--muted); font-weight: 600; }
-
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--muted-light); }
-
   @media (max-width: 768px) {
     .app { grid-template-columns: 1fr; }
     .sidebar { display: none; }
@@ -395,7 +208,7 @@
     <div class="logo-mark">VIT</div>
     <div class="logo-text">
       <h1>VIT Timetable Generator</h1>
-      <p>SY - CSE (AI&ML) · A.Y. 2025-26</p>
+      <p>CSE (AI&ML) · A.Y. 2025-26</p>
     </div>
   </div>
   <div class="header-actions">
@@ -406,7 +219,6 @@
 </header>
 
 <div class="app">
-  <!-- SIDEBAR -->
   <nav class="sidebar">
     <div class="sidebar-section">
       <span class="sidebar-label">Overview</span>
@@ -414,7 +226,6 @@
         <span class="icon">⊞</span> Dashboard
       </div>
     </div>
-
     <div class="sidebar-section">
       <span class="sidebar-label">Timetables</span>
       <div class="sidebar-item" onclick="showPage('division-tt', this)">
@@ -430,9 +241,7 @@
         <span class="icon">▣</span> By Room
       </div>
     </div>
-
     <div class="sidebar-divider"></div>
-
     <div class="sidebar-section">
       <span class="sidebar-label">Data Management</span>
       <div class="sidebar-item" onclick="showPage('add-year', this)">
@@ -448,9 +257,7 @@
         <span class="icon">+</span> Add Subject
       </div>
     </div>
-
     <div class="sidebar-divider"></div>
-
     <div class="sidebar-section">
       <span class="sidebar-label">Reference</span>
       <div class="sidebar-item" onclick="showPage('teachers-ref', this)">
@@ -459,21 +266,19 @@
     </div>
   </nav>
 
-  <!-- CONTENT -->
   <main class="content">
 
-    <!-- ── OVERVIEW ── -->
     <div id="page-overview" class="page active">
       <div class="page-header">
         <h2>System Overview</h2>
-        <p>AI-powered constraint satisfaction scheduler for SY divisions</p>
+        <p>AI-powered constraint satisfaction scheduler for SY &amp; TY divisions</p>
       </div>
       <div id="no-data-warning" class="warning-banner" style="display:none;">
         ⚠ No teachers or rooms found. Please add data via the sidebar or click <strong>Seed DB</strong> to populate defaults.
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">Divisions</div></div>
-        <div class="stat-card"><div class="stat-value">21</div><div class="stat-label">Batches</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-divisions">—</div><div class="stat-label">Divisions</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-batches">—</div><div class="stat-label">Batches</div></div>
         <div class="stat-card"><div class="stat-value" id="stat-subjects">—</div><div class="stat-label">Subjects</div></div>
         <div class="stat-card"><div class="stat-value" id="stat-teachers">—</div><div class="stat-label">Faculty</div></div>
         <div class="stat-card"><div class="stat-value" id="stat-rooms">—</div><div class="stat-label">Rooms</div></div>
@@ -485,14 +290,13 @@
           <button class="btn" style="font-size:11px;padding:4px 10px;font-weight:700" onclick="clearConsole()">Clear</button>
         </div>
         <div class="console-body" id="console">
-          <div class="log-line info">// AI Timetable Scheduler — VIT SY 2025-26</div>
+          <div class="log-line info">// AI Timetable Scheduler — VIT 2025-26</div>
           <div class="log-line info">// DFS + Backtracking CSP Engine ready</div>
           <div class="log-line info">// Loading data from backend…</div>
         </div>
       </div>
     </div>
 
-    <!-- ── DIVISION TT ── -->
     <div id="page-division-tt" class="page">
       <div class="page-header"><h2>Division Timetable</h2><p>Full weekly schedule for a division (theory + lab overview)</p></div>
       <div class="timetable-controls">
@@ -508,13 +312,12 @@
       <div id="div-tt-container"></div>
     </div>
 
-    <!-- ── BATCH TT ── -->
     <div id="page-batch-tt" class="page">
       <div class="page-header"><h2>Batch Timetable</h2><p>Theory + Lab sessions for a specific batch</p></div>
       <div class="timetable-controls">
         <select class="select-styled" id="batch-div-select" onchange="loadBatchOptions()">
-  <option value="">Select Division…</option>
-</select>
+          <option value="">Select Division…</option>
+        </select>
         <select class="select-styled" id="batch-select" onchange="loadBatchTT()">
           <option value="">Select Batch…</option>
         </select>
@@ -522,7 +325,6 @@
       <div id="batch-tt-container"></div>
     </div>
 
-    <!-- ── TEACHER TT ── -->
     <div id="page-teacher-tt" class="page">
       <div class="page-header"><h2>Teacher Timetable</h2><p>Weekly schedule for a faculty member</p></div>
       <div class="timetable-controls">
@@ -533,7 +335,6 @@
       <div id="teacher-tt-container"></div>
     </div>
 
-    <!-- ── ROOM TT ── -->
     <div id="page-room-tt" class="page">
       <div class="page-header"><h2>Room Schedule</h2><p>Occupancy view for a classroom or lab</p></div>
       <div class="timetable-controls">
@@ -544,27 +345,19 @@
       <div id="room-tt-container"></div>
     </div>
 
-    <!-- ── ADD YEAR ── -->
     <div id="page-add-year" class="page">
-      <div class="page-header">
-        <h2>Add Year</h2>
-        <p>Register an academic year (e.g. SY, TY, FY) before adding subjects</p>
-      </div>
+      <div class="page-header"><h2>Add Year</h2><p>Register an academic year (e.g. SY, TY, FY) before adding subjects</p></div>
       <div style="margin-bottom:20px;">
         <div style="font-family:var(--font);font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">Existing Years</div>
-        <div class="year-grid" id="year-list">
-          <div style="color:var(--muted);font-size:12.5px;font-weight:600;grid-column:1/-1">
-            <span class="spinner"></span> Loading…
-          </div>
-        </div>
+        <div class="year-grid" id="year-list"><div style="color:var(--muted);font-size:12.5px;font-weight:600;grid-column:1/-1"><span class="spinner"></span> Loading…</div></div>
       </div>
       <div class="form-card">
         <div class="form-group">
           <label class="form-label">Quick Pick</label>
           <div class="checkbox-group">
-            <label class="checkbox-item" id="ypick-SY" onclick="setYearQuickPick('SY')">SY</label>
-            <label class="checkbox-item" id="ypick-TY" onclick="setYearQuickPick('TY')">TY</label>
-            <label class="checkbox-item" id="ypick-FY" onclick="setYearQuickPick('FY')">FY</label>
+            <label class="checkbox-item" onclick="setYearQuickPick('SY')">SY</label>
+            <label class="checkbox-item" onclick="setYearQuickPick('TY')">TY</label>
+            <label class="checkbox-item" onclick="setYearQuickPick('FY')">FY</label>
           </div>
           <div class="form-hint">Click to pre-fill the field below, or type a custom name.</div>
         </div>
@@ -580,7 +373,6 @@
       </div>
     </div>
 
-    <!-- ── ADD TEACHER ── -->
     <div id="page-add-teacher" class="page">
       <div class="page-header"><h2>Add Teacher</h2><p>Register a new faculty member and assign subject responsibilities</p></div>
       <div class="form-card">
@@ -597,9 +389,7 @@
         <div class="form-group">
           <label class="form-label">Subjects</label>
           <div class="multi-select-container" id="t-subjects-list">
-            <div style="padding:16px;text-align:center;color:var(--muted);font-size:12px;font-weight:600;">
-              <span class="spinner"></span> Loading subjects…
-            </div>
+            <div style="padding:16px;text-align:center;color:var(--muted);font-size:12px;font-weight:600;"><span class="spinner"></span> Loading subjects…</div>
           </div>
           <div class="form-hint">Click to select subjects this teacher handles.</div>
         </div>
@@ -620,7 +410,6 @@
       </div>
     </div>
 
-    <!-- ── ADD ROOM ── -->
     <div id="page-add-room" class="page">
       <div class="page-header"><h2>Add Room</h2><p>Register a new classroom or laboratory</p></div>
       <div class="form-card">
@@ -648,7 +437,6 @@
       </div>
     </div>
 
-    <!-- ── ADD SUBJECT ── -->
     <div id="page-add-subject" class="page">
       <div class="page-header"><h2>Add Subject</h2><p>Register a new subject and configure its lecture components</p></div>
       <div class="form-card">
@@ -666,7 +454,7 @@
           <select class="form-select" id="s-year">
             <option value="">Loading years…</option>
           </select>
-          <div class="form-hint">Which year this subject belongs to. <a href="#" onclick="showPage('add-year', document.querySelector('.sidebar-item[onclick*=add-year]'));return false;" style="color:var(--accent);font-weight:700;">+ Add a new year</a></div>
+          <div class="form-hint">Which year this subject belongs to.</div>
         </div>
         <div class="form-divider"></div>
         <div class="form-group">
@@ -686,9 +474,8 @@
       </div>
     </div>
 
-    <!-- ── FACULTY ── -->
     <div id="page-teachers-ref" class="page">
-      <div class="page-header"><h2>Faculty Directory</h2><p>SY CSE (AI&ML) teaching staff</p></div>
+      <div class="page-header"><h2>Faculty Directory</h2><p>CSE (AI&ML) teaching staff</p></div>
       <div class="teacher-grid" id="teacher-grid">
         <div style="padding:40px;text-align:center;color:var(--muted);grid-column:1/-1"><span class="spinner"></span> Loading faculty…</div>
       </div>
@@ -699,31 +486,26 @@
 
 <div id="toast-container"></div>
 
-<!-- ── EDIT TEACHER MODAL ── -->
+<!-- EDIT MODAL -->
 <div class="modal-overlay" id="edit-modal" onclick="handleModalBackdropClick(event)">
   <div class="modal-box">
     <div class="modal-header">
       <div class="modal-title">✎ Edit Teacher</div>
       <button class="modal-close" onclick="closeEditModal()">✕</button>
     </div>
-
     <input type="hidden" id="edit-teacher-id">
-
     <div class="modal-section-label">Basic Info</div>
     <div class="form-group" style="margin-bottom:14px;">
       <label class="form-label" for="edit-t-name">Full Name</label>
-      <input class="form-input" id="edit-t-name" type="text" placeholder="e.g. MR. JOHN DOE" autocomplete="off">
+      <input class="form-input" id="edit-t-name" type="text" autocomplete="off">
     </div>
     <div class="form-group" style="margin-bottom:0;">
       <label class="form-label" for="edit-t-code">Short Code</label>
       <input class="form-input" id="edit-t-code" type="text" maxlength="6" autocomplete="off">
       <div class="form-hint">Changing the code will affect all timetable references.</div>
     </div>
-
     <div class="modal-section-label">Add More Assignments</div>
-    <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;">
-      Select subjects + lecture types below to <strong>add</strong> new assignments. Existing ones are preserved.
-    </div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;">Select subjects + lecture types to <strong>add</strong> new assignments.</div>
     <div class="form-group" style="margin-bottom:14px;">
       <label class="form-label">Subjects</label>
       <div class="multi-select-container" id="edit-subjects-list" style="max-height:130px;"></div>
@@ -736,10 +518,8 @@
         <label class="checkbox-item" id="edit-ltype-TUTORIAL"><input type="checkbox" value="TUTORIAL"> Tutorial</label>
       </div>
     </div>
-
     <div class="modal-section-label">Current Assignments</div>
     <div id="edit-current-assignments" style="display:flex;flex-wrap:wrap;gap:6px;min-height:28px;"></div>
-
     <div class="modal-footer">
       <button class="btn btn-success" id="edit-save-btn" onclick="submitEditTeacher()">✓ Save Changes</button>
       <button class="btn" onclick="closeEditModal()">Cancel</button>
@@ -748,12 +528,12 @@
   </div>
 </div>
 
-<!-- ── DELETE CONFIRM MODAL ── -->
+<!-- DELETE MODAL -->
 <div class="modal-overlay" id="delete-modal" onclick="handleDeleteBackdropClick(event)">
   <div class="confirm-box">
     <div class="confirm-icon">🗑️</div>
     <div class="confirm-title" id="confirm-title">Delete Teacher?</div>
-    <div class="confirm-desc" id="confirm-desc">This will permanently remove the teacher and all their timetable entries. This cannot be undone.</div>
+    <div class="confirm-desc" id="confirm-desc">This will permanently remove the teacher and all their timetable entries.</div>
     <div class="confirm-actions">
       <button class="btn btn-outline-danger" id="confirm-delete-btn" onclick="confirmDelete()">Yes, Delete</button>
       <button class="btn" onclick="closeDeleteModal()">Cancel</button>
@@ -763,7 +543,6 @@
 
 <script>
 const API = 'http://localhost:8000';
-
 const DAYS_ORDER  = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY'];
 const SLOT_TIMES  = [800,900,1000,1100,1200,1300,1400,1500,1600];
 const SLOT_LABELS = {800:'08:00',900:'09:00',1000:'10:00',1100:'11:00',1200:'12:00',1300:'13:00',1400:'14:00',1500:'15:00',1600:'16:00',1700:'17:00'};
@@ -773,6 +552,8 @@ let _selectedSubjects = new Set();
 let _editSelectedSubjects = new Set();
 let _pendingDeleteId = null;
 let _pendingDeleteCode = '';
+
+// ── Divisions ────────────────────────────────────────────────────────────────
 
 async function loadAllDivisions() {
   try {
@@ -784,18 +565,24 @@ async function loadAllDivisions() {
     return [];
   }
 }
- 
+
 async function populateDivisionDropdowns() {
   const divs = await loadAllDivisions();
   if (!divs.length) return;
- 
+
   const byYear = {};
   divs.forEach(d => {
     const yr = d.year?.name || 'Unknown';
     byYear[yr] = byYear[yr] || [];
     byYear[yr].push(d);
   });
- 
+
+  // Update stats
+  const sd = document.getElementById('stat-divisions');
+  const sb = document.getElementById('stat-batches');
+  if (sd) sd.textContent = divs.length;
+  if (sb) sb.textContent = divs.length * 3; // 3 batches per division
+
   function buildOptions(selEl) {
     const prev = selEl.value;
     selEl.innerHTML = '<option value="">Select Division…</option>';
@@ -804,7 +591,7 @@ async function populateDivisionDropdowns() {
       grp.label = yr;
       list.forEach(d => {
         const o = document.createElement('option');
-        // Value encodes "divName|yearName" so loaders can pass correct name
+        // value = "divName|yearName"
         o.value = d.name + '|' + yr;
         o.textContent = `${yr} – ${d.name} (${d.timeWindow})`;
         grp.appendChild(o);
@@ -813,35 +600,35 @@ async function populateDivisionDropdowns() {
     });
     if (prev) selEl.value = prev;
   }
- 
+
   buildOptions(document.getElementById('div-select'));
   buildOptions(document.getElementById('batch-div-select'));
 }
- 
-// Division timetable loader — uses divName from encoded value
+
+// ── Timetable loaders ────────────────────────────────────────────────────────
+
 async function loadDivisionTT() {
   const val = document.getElementById('div-select').value;
   if (!val) return;
-  const divName = val.split('|')[0];
+  const [divName, yearName] = val.split('|');
   const c = document.getElementById('div-tt-container');
   c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
   try {
-    const r = await fetch(`${API}/timetable/division/${divName}`);
-    c.innerHTML = renderTimetableHTML(await r.json());
+    const r = await fetch(`${API}/timetable/division/${encodeURIComponent(yearName)}/${encodeURIComponent(divName)}`);
+    c.innerHTML = renderTimetableHTML(normalizeEntries(await r.json()));
   } catch(e) {
     c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
   }
 }
- 
-// Batch options loader — fetches batches for selected division
+
 async function loadBatchOptions() {
   const val = document.getElementById('batch-div-select').value;
   const sel = document.getElementById('batch-select');
   sel.innerHTML = '<option value="">Select Batch…</option>';
   if (!val) return;
-  const divName = val.split('|')[0];
+  const [divName, yearName] = val.split('|');
   try {
-    const r = await fetch(`${API}/batches/${divName}`);
+    const r = await fetch(`${API}/batches/${encodeURIComponent(yearName)}/${encodeURIComponent(divName)}`);
     const batches = await r.json();
     if (batches.length > 0) {
       batches.forEach(b => {
@@ -865,443 +652,6 @@ async function loadBatchOptions() {
       o.textContent = `${divName}-${n}`;
       sel.appendChild(o);
     });
-  }
-}
-
-// ── Navigation
-function showPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  if (el) el.classList.add('active');
-
-  if (id === 'teachers-ref')  renderTeacherGrid();
-  if (id === 'add-teacher')   renderSubjectMultiSelect();
-  if (id === 'add-year')      renderYearList();
-  if (id === 'add-subject')   populateYearDropdown();
-}
-
-// ── Console
-function log(msg, type = 'info') {
-  const c = document.getElementById('console');
-  const d = document.createElement('div');
-  d.className = 'log-line ' + type;
-  const time = new Date().toLocaleTimeString('en-US', {hour12:false});
-  d.textContent = `[${time}] ${msg}`;
-  c.appendChild(d);
-  c.scrollTop = c.scrollHeight;
-}
-function clearConsole() { document.getElementById('console').innerHTML = ''; }
-function setStatus(state, text) {
-  const b = document.getElementById('status-badge');
-  b.className = 'status-badge ' + state;
-  b.innerHTML = `<span class="pulse"></span>${text}`;
-}
-function toast(msg, type = 'info') {
-  const c = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  t.className = 'toast ' + type;
-  t.textContent = msg;
-  c.appendChild(t);
-  setTimeout(() => t.remove(), 3500);
-}
-
-// ── Fetch helpers
-async function fetchTeachers() {
-  try {
-    const r = await fetch(`${API}/teachers`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    _teachers = await r.json(); return _teachers;
-  } catch(e) { log('Failed to load teachers: ' + e.message, 'warn'); return []; }
-}
-async function fetchRooms() {
-  try {
-    const r = await fetch(`${API}/rooms`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    _rooms = await r.json(); return _rooms;
-  } catch(e) { log('Failed to load rooms: ' + e.message, 'warn'); return []; }
-}
-async function fetchSubjects() {
-  try {
-    const r = await fetch(`${API}/subjects`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    _subjects = await r.json(); return _subjects;
-  } catch(e) { log('Failed to load subjects: ' + e.message, 'warn'); return []; }
-}
-async function fetchYears() {
-  try {
-    const r = await fetch(`${API}/years`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    _years = await r.json(); return _years;
-  } catch(e) { log('Failed to load years: ' + e.message, 'warn'); return []; }
-}
-
-async function refreshDropdowns() {
-  const [teachers, rooms, subjects, years] = await Promise.all([
-    fetchTeachers(), fetchRooms(), fetchSubjects(), fetchYears()
-  ]);
-
-  const teacherSel = document.getElementById('teacher-select');
-  const prevTeacher = teacherSel.value;
-  teacherSel.innerHTML = '<option value="">Select Teacher…</option>';
-  teachers.forEach(t => {
-    const opt = document.createElement('option');
-    opt.value = t.shortCode;
-    opt.textContent = `${t.shortCode} — ${t.name}`;
-    teacherSel.appendChild(opt);
-  });
-  if (prevTeacher) teacherSel.value = prevTeacher;
-
-  const roomSel = document.getElementById('room-select');
-  const prevRoom = roomSel.value;
-  roomSel.innerHTML = '<option value="">Select Room…</option>';
-  const theoryRooms = rooms.filter(r => r.roomType === 'THEORY');
-  const labRooms    = rooms.filter(r => r.roomType === 'LAB');
-  if (theoryRooms.length) {
-    const grp = document.createElement('optgroup'); grp.label = 'Theory Rooms';
-    theoryRooms.forEach(r => { const o = document.createElement('option'); o.value = r.roomNumber; o.textContent = r.roomNumber; grp.appendChild(o); });
-    roomSel.appendChild(grp);
-  }
-  if (labRooms.length) {
-    const grp = document.createElement('optgroup'); grp.label = 'Lab Rooms';
-    labRooms.forEach(r => { const o = document.createElement('option'); o.value = r.roomNumber; o.textContent = r.roomNumber; grp.appendChild(o); });
-    roomSel.appendChild(grp);
-  }
-  if (prevRoom) roomSel.value = prevRoom;
-
-  const ts = document.getElementById('stat-teachers');
-  const rs = document.getElementById('stat-rooms');
-  const ss = document.getElementById('stat-subjects');
-  const ys = document.getElementById('stat-years');
-  if (ts) ts.textContent = teachers.length || '—';
-  if (rs) rs.textContent = rooms.length    || '—';
-  if (ss) ss.textContent = subjects.length || '—';
-  if (ys) ys.textContent = years.length    || '—';
-
-  const warn = document.getElementById('no-data-warning');
-  if (warn) warn.style.display = (teachers.length === 0 || rooms.length === 0) ? 'flex' : 'none';
-}
-
-// ── Year helpers
-function populateYearDropdown() {
-  const sel = document.getElementById('s-year');
-  if (!sel) return;
-  const prev = sel.value;
-  sel.innerHTML = _years.length === 0
-    ? '<option value="">No years found — add one first</option>'
-    : '<option value="">Select year…</option>';
-  _years.forEach(y => {
-    const o = document.createElement('option');
-    o.value = y.name;
-    o.textContent = y.name;
-    sel.appendChild(o);
-  });
-  if (prev) sel.value = prev;
-}
-
-function renderYearList() {
-  const grid = document.getElementById('year-list');
-  if (!grid) return;
-  if (_years.length === 0) {
-    grid.innerHTML = `<div style="color:var(--muted);font-size:12.5px;font-weight:600;grid-column:1/-1">No years added yet.</div>`;
-    return;
-  }
-  grid.innerHTML = _years.map(y => `
-    <div class="year-card">
-      <div>
-        <div class="year-name">${y.name}</div>
-        <div class="year-id">ID: ${y.id}</div>
-      </div>
-      <button class="btn btn-outline-danger" style="font-size:11px;padding:5px 10px;" onclick="deleteYear(${y.id}, '${y.name}')">✕</button>
-    </div>
-  `).join('');
-}
-
-function setYearQuickPick(name) {
-  document.getElementById('y-name').value = name;
-}
-
-async function submitAddYear() {
-  const name   = document.getElementById('y-name').value.trim().toUpperCase();
-  const status = document.getElementById('add-year-status');
-  if (!name) { toast('Enter a year name', 'error'); return; }
-
-  const btn = document.getElementById('add-year-btn');
-  btn.innerHTML = '<span class="spinner"></span> Saving…';
-  btn.disabled = true;
-  status.textContent = '';
-
-  try {
-    const r = await fetch(`${API}/years`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({name})
-    });
-    if (!r.ok) {
-      const err = await r.json().catch(() => ({}));
-      throw new Error(err.detail || err.message || `HTTP ${r.status}`);
-    }
-    toast(`Year "${name}" added`, 'success');
-    log(`Year added: ${name}`, 'success');
-    document.getElementById('y-name').value = '';
-    await fetchYears();
-    renderYearList();
-    populateYearDropdown();
-    const ys = document.getElementById('stat-years');
-    if (ys) ys.textContent = _years.length;
-  } catch(e) {
-    toast('Failed: ' + e.message, 'error');
-    status.textContent = '✗ ' + e.message;
-    status.style.color = '#c0392b';
-  }
-  btn.innerHTML = '✓ Add Year';
-  btn.disabled = false;
-}
-
-async function deleteYear(id, name) {
-  if (!confirm(`Delete year "${name}"? This cannot be undone.`)) return;
-  try {
-    const r = await fetch(`${API}/years/${id}`, {method: 'DELETE'});
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    toast(`Year "${name}" deleted`, 'success');
-    await fetchYears();
-    renderYearList();
-    populateYearDropdown();
-  } catch(e) {
-    toast('Delete failed: ' + e.message, 'error');
-  }
-}
-
-// ── Subject multi-select (Add Teacher form)
-function renderSubjectMultiSelect() {
-  const container = document.getElementById('t-subjects-list');
-  if (!container) return;
-  if (_subjects.length === 0) {
-    container.innerHTML = `<div style="padding:14px 16px;color:var(--muted);font-size:12.5px;font-weight:600;">No subjects found. Seed the database first.</div>`;
-    return;
-  }
-  container.innerHTML = _subjects.map(s => `
-    <div class="multi-select-option ${_selectedSubjects.has(s.id) ? 'selected' : ''}" onclick="toggleSubjectSelection(${s.id}, this)">
-      <span class="check-icon">${_selectedSubjects.has(s.id) ? '✓' : ''}</span>
-      <span>${s.code} — ${s.name}</span>
-    </div>
-  `).join('');
-}
-
-function toggleSubjectSelection(id, el) {
-  if (_selectedSubjects.has(id)) { _selectedSubjects.delete(id); el.classList.remove('selected'); el.querySelector('.check-icon').textContent = ''; }
-  else { _selectedSubjects.add(id); el.classList.add('selected'); el.querySelector('.check-icon').textContent = '✓'; }
-}
-
-document.addEventListener('change', function(e) {
-  if (e.target.type === 'checkbox' && e.target.closest('.checkbox-item')) {
-    e.target.closest('.checkbox-item').classList.toggle('checked', e.target.checked);
-  }
-});
-
-// ── Add Teacher
-async function submitAddTeacher() {
-  const name = document.getElementById('t-name').value.trim();
-  const code = document.getElementById('t-code').value.trim().toUpperCase();
-  const status = document.getElementById('add-teacher-status');
-  if (!name || !code) { toast('Please fill in Name and Short Code', 'error'); return; }
-  const selectedTypes = Array.from(document.querySelectorAll('#t-lecture-types input[type="checkbox"]:checked')).map(cb => cb.value);
-  const btn = document.getElementById('add-teacher-btn');
-  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
-  try {
-    const r = await fetch(`${API}/teachers`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, shortCode:code, subjectIds:Array.from(_selectedSubjects), lectureTypes:selectedTypes})});
-    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
-    toast(`Teacher ${code} added successfully`, 'success');
-    log(`Teacher added: ${code} — ${name}`, 'success');
-    clearTeacherForm(); await refreshDropdowns();
-  } catch(e) {
-    toast('Failed to add teacher: ' + e.message, 'error');
-    log('Add teacher error: ' + e.message, 'error');
-    status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
-  }
-  btn.innerHTML = '✓ Add Teacher'; btn.disabled = false;
-}
-
-function clearTeacherForm() {
-  document.getElementById('t-name').value = '';
-  document.getElementById('t-code').value = '';
-  _selectedSubjects.clear();
-  document.querySelectorAll('#t-lecture-types input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.closest('.checkbox-item').classList.remove('checked'); });
-  document.getElementById('add-teacher-status').textContent = '';
-  renderSubjectMultiSelect();
-}
-
-// ── Add Room
-async function submitAddRoom() {
-  const number = document.getElementById('r-number').value.trim();
-  const type   = document.getElementById('r-type').value;
-  const cap    = document.getElementById('r-capacity').value;
-  const status = document.getElementById('add-room-status');
-  if (!number || !type) { toast('Please fill in Room Number and Type', 'error'); return; }
-  const btn = document.getElementById('add-room-btn');
-  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
-  try {
-    const body = {roomNumber:number, roomType:type};
-    if (cap) body.capacity = parseInt(cap, 10);
-    const r = await fetch(`${API}/rooms`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
-    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
-    toast(`Room ${number} (${type}) added`, 'success');
-    log(`Room added: ${number} — ${type}`, 'success');
-    clearRoomForm(); await refreshDropdowns();
-  } catch(e) {
-    toast('Failed to add room: ' + e.message, 'error');
-    status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
-  }
-  btn.innerHTML = '✓ Add Room'; btn.disabled = false;
-}
-
-function clearRoomForm() {
-  document.getElementById('r-number').value = '';
-  document.getElementById('r-type').value = '';
-  document.getElementById('r-capacity').value = '';
-  document.getElementById('add-room-status').textContent = '';
-}
-
-// ── Add Subject
-async function submitAddSubject() {
-  const name   = document.getElementById('s-name').value.trim();
-  const code   = document.getElementById('s-code').value.trim().toUpperCase();
-  const year   = document.getElementById('s-year').value;
-  const status = document.getElementById('add-subject-status');
-  if (!name || !code) { toast('Please fill in Subject Name and Code', 'error'); return; }
-  if (!year) { toast('Please select an Academic Year', 'error'); return; }
-  const hasTheory   = document.querySelector('#sltype-theory input').checked;
-  const hasLab      = document.querySelector('#sltype-lab input').checked;
-  const hasTutorial = document.querySelector('#sltype-tutorial input').checked;
-  const btn = document.getElementById('add-subject-btn');
-  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
-  try {
-    const r = await fetch(`${API}/subjects`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, code, year, hasTheory, hasLab, hasTutorial})});
-    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
-    toast(`Subject ${code} added successfully`, 'success');
-    log(`Subject added: ${code} — ${name} (${year})`, 'success');
-    clearSubjectForm(); await fetchSubjects();
-  } catch(e) {
-    toast('Failed to add subject: ' + e.message, 'error');
-    log('Add subject error: ' + e.message, 'error');
-    status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
-  }
-  btn.innerHTML = '✓ Add Subject'; btn.disabled = false;
-}
-
-function clearSubjectForm() {
-  document.getElementById('s-name').value = '';
-  document.getElementById('s-code').value = '';
-  document.getElementById('s-year').value = '';
-  ['sltype-theory','sltype-lab','sltype-tutorial'].forEach(id => {
-    const el = document.getElementById(id);
-    el.querySelector('input').checked = false;
-    el.classList.remove('checked');
-  });
-  document.getElementById('add-subject-status').textContent = '';
-}
-
-// ── Seed
-async function runSeed() {
-  setStatus('running', 'SEEDING');
-  log('Seeding database with SY subjects, teachers, rooms, timeslots…');
-  try {
-    const r = await fetch(`${API}/seed`, {method:'POST'});
-    const d = await r.json();
-    log('✓ ' + (d.message || JSON.stringify(d)), 'success');
-    setStatus('ready', 'READY');
-    toast('Database seeded successfully', 'success');
-    await refreshDropdowns();
-    renderYearList();
-    populateYearDropdown();
-  } catch(e) {
-    log('Error: ' + e.message, 'error'); setStatus('error', 'ERROR'); toast('Seed failed — is backend running?', 'error');
-  }
-}
-
-// ── Generate
-async function generateTimetable() {
-  const btn = document.getElementById('gen-btn');
-  btn.innerHTML = '<span class="spinner"></span> Running DFS…'; btn.disabled = true;
-  setStatus('running', 'RUNNING'); log('Starting DFS backtracking scheduler…');
-  try {
-    const r = await fetch(`${API}/generate-timetable`, {method:'POST'});
-    const d = await r.json();
-    if (d.error) { log('✗ ' + d.error, 'error'); setStatus('error', 'ERROR'); toast(d.error, 'error'); }
-    else { log('✓ ' + d.message, 'success'); log('All constraints satisfied — conflict-free timetable saved', 'success'); setStatus('ready', 'READY'); toast(d.message, 'success'); }
-  } catch(e) { log('Error: ' + e.message, 'error'); setStatus('error', 'ERROR'); toast('Generation failed — is backend running?', 'error'); }
-  btn.innerHTML = '✦ Generate Timetable'; btn.disabled = false;
-}
-
-// ── Grid builder
-function buildTimetableGrid(entries) {
-  const grid = {};
-  DAYS_ORDER.forEach(d => { grid[d] = {}; });
-  entries.forEach(e => {
-    const day = e.timeslot?.day, st = e.timeslot?.startTime;
-    if (!day || !st) return;
-    if (!grid[day]) grid[day] = {};
-    grid[day][st] = e;
-  });
-  return grid;
-}
-
-function renderCell(e) {
-  if (!e) return '<div class="cell-empty"></div>';
-  const cls   = (e.lectureType||'').toLowerCase();
-  const subj  = e.subject?.code || e.subject?.name || '?';
-  const subjF = e.subject?.name || '';
-  const teacher = e.teacher?.shortCode || '';
-  const room    = e.room?.roomNumber || '';
-  const batch   = e.batch?.name ? `<span style="font-size:9px;color:#9b6dd6;font-weight:700">${e.batch.name}</span>` : '';
-  return `<div class="cell-entry ${cls}" title="${subjF} — ${teacher} — ${room}">
-    <div class="cell-subject">${subj}</div>
-    <div class="cell-teacher">${teacher}</div>
-    <div class="cell-room">${room}</div>${batch}
-  </div>`;
-}
-
-// Normalize API response — handles array, {entries:[...]}, {data:[...]}, etc.
-function normalizeEntries(raw) {
-  if (Array.isArray(raw)) return raw;
-  if (raw && Array.isArray(raw.entries)) return raw.entries;
-  if (raw && Array.isArray(raw.data))    return raw.data;
-  return [];
-}
-
-function renderTimetableHTML(entries) {
-  if (!entries || entries.length === 0) {
-    return `<div class="empty-state"><div class="empty-icon">📭</div><h3>No entries found</h3><p>Generate a timetable first, or select a valid option above.</p></div>`;
-  }
-  const grid = buildTimetableGrid(entries);
-  let html = `<div class="timetable-wrapper"><table class="tt"><thead><tr><th>Slot</th>`;
-  DAYS_ORDER.forEach(d => { html += `<th class="day-head">${d.slice(0,3)}</th>`; });
-  html += `</tr></thead><tbody>`;
-  SLOT_TIMES.forEach(st => {
-    const lbl = SLOT_LABELS[st] + '–' + SLOT_LABELS[st === 1600 ? 1700 : st + 100];
-    html += `<tr><td>${lbl}</td>`;
-    DAYS_ORDER.forEach(day => {
-      const e = grid[day]?.[st];
-      if (st === 1300 && !e) html += `<td><div class="cell-entry lunch"><div class="cell-teacher" style="color:var(--muted-light);font-size:10px;font-weight:700;">LUNCH BREAK</div></div></td>`;
-      else html += `<td>${renderCell(e)}</td>`;
-    });
-    html += `</tr>`;
-  });
-  html += `</tbody></table></div>`;
-  return html;
-}
-
-async function loadDivisionTT() {
-  const val = document.getElementById('div-select').value;
-  if (!val) return;
-  const divName = val.split('|')[0];          // ← decode encoded value
-  const c = document.getElementById('div-tt-container');
-  c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)"><span class="spinner"></span> Loading…</div>';
-  try {
-    const r = await fetch(`${API}/timetable/division/${divName}`);
-    c.innerHTML = renderTimetableHTML(normalizeEntries(await r.json()));
-  } catch(e) {
-    c.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
   }
 }
 
@@ -1344,7 +694,394 @@ async function loadRoomTT() {
   }
 }
 
-// ── Faculty grid (with Edit + Delete buttons)
+// ── Navigation ───────────────────────────────────────────────────────────────
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  if (id === 'teachers-ref') renderTeacherGrid();
+  if (id === 'add-teacher')  renderSubjectMultiSelect();
+  if (id === 'add-year')     renderYearList();
+  if (id === 'add-subject')  populateYearDropdown();
+}
+
+// ── Console ──────────────────────────────────────────────────────────────────
+
+function log(msg, type = 'info') {
+  const c = document.getElementById('console');
+  const d = document.createElement('div');
+  d.className = 'log-line ' + type;
+  const time = new Date().toLocaleTimeString('en-US', {hour12:false});
+  d.textContent = `[${time}] ${msg}`;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+function clearConsole() { document.getElementById('console').innerHTML = ''; }
+function setStatus(state, text) {
+  const b = document.getElementById('status-badge');
+  b.className = 'status-badge ' + state;
+  b.innerHTML = `<span class="pulse"></span>${text}`;
+}
+function toast(msg, type = 'info') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ── Fetch helpers ────────────────────────────────────────────────────────────
+
+async function fetchTeachers() {
+  try { const r = await fetch(`${API}/teachers`); if (!r.ok) throw new Error(`HTTP ${r.status}`); _teachers = await r.json(); return _teachers; }
+  catch(e) { log('Failed to load teachers: ' + e.message, 'warn'); return []; }
+}
+async function fetchRooms() {
+  try { const r = await fetch(`${API}/rooms`); if (!r.ok) throw new Error(`HTTP ${r.status}`); _rooms = await r.json(); return _rooms; }
+  catch(e) { log('Failed to load rooms: ' + e.message, 'warn'); return []; }
+}
+async function fetchSubjects() {
+  try { const r = await fetch(`${API}/subjects`); if (!r.ok) throw new Error(`HTTP ${r.status}`); _subjects = await r.json(); return _subjects; }
+  catch(e) { log('Failed to load subjects: ' + e.message, 'warn'); return []; }
+}
+async function fetchYears() {
+  try { const r = await fetch(`${API}/years`); if (!r.ok) throw new Error(`HTTP ${r.status}`); _years = await r.json(); return _years; }
+  catch(e) { log('Failed to load years: ' + e.message, 'warn'); return []; }
+}
+
+async function refreshDropdowns() {
+  const [teachers, rooms, subjects, years] = await Promise.all([fetchTeachers(), fetchRooms(), fetchSubjects(), fetchYears()]);
+
+  const teacherSel = document.getElementById('teacher-select');
+  const prevTeacher = teacherSel.value;
+  teacherSel.innerHTML = '<option value="">Select Teacher…</option>';
+  teachers.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.shortCode;
+    opt.textContent = `${t.shortCode} — ${t.name}`;
+    teacherSel.appendChild(opt);
+  });
+  if (prevTeacher) teacherSel.value = prevTeacher;
+
+  const roomSel = document.getElementById('room-select');
+  const prevRoom = roomSel.value;
+  roomSel.innerHTML = '<option value="">Select Room…</option>';
+  const theoryRooms = rooms.filter(r => r.roomType === 'THEORY');
+  const labRooms    = rooms.filter(r => r.roomType === 'LAB');
+  if (theoryRooms.length) {
+    const grp = document.createElement('optgroup'); grp.label = 'Theory Rooms';
+    theoryRooms.forEach(r => { const o = document.createElement('option'); o.value = r.roomNumber; o.textContent = r.roomNumber; grp.appendChild(o); });
+    roomSel.appendChild(grp);
+  }
+  if (labRooms.length) {
+    const grp = document.createElement('optgroup'); grp.label = 'Lab Rooms';
+    labRooms.forEach(r => { const o = document.createElement('option'); o.value = r.roomNumber; o.textContent = r.roomNumber; grp.appendChild(o); });
+    roomSel.appendChild(grp);
+  }
+  if (prevRoom) roomSel.value = prevRoom;
+
+  const ts = document.getElementById('stat-teachers');
+  const rs = document.getElementById('stat-rooms');
+  const ss = document.getElementById('stat-subjects');
+  const ys = document.getElementById('stat-years');
+  if (ts) ts.textContent = teachers.length || '—';
+  if (rs) rs.textContent = rooms.length    || '—';
+  if (ss) ss.textContent = subjects.length || '—';
+  if (ys) ys.textContent = years.length    || '—';
+
+  const warn = document.getElementById('no-data-warning');
+  if (warn) warn.style.display = (teachers.length === 0 || rooms.length === 0) ? 'flex' : 'none';
+}
+
+// ── Year helpers ─────────────────────────────────────────────────────────────
+
+function populateYearDropdown() {
+  const sel = document.getElementById('s-year');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = _years.length === 0
+    ? '<option value="">No years found — add one first</option>'
+    : '<option value="">Select year…</option>';
+  _years.forEach(y => {
+    const o = document.createElement('option');
+    o.value = y.name;
+    o.textContent = y.name;
+    sel.appendChild(o);
+  });
+  if (prev) sel.value = prev;
+}
+
+function renderYearList() {
+  const grid = document.getElementById('year-list');
+  if (!grid) return;
+  if (_years.length === 0) {
+    grid.innerHTML = `<div style="color:var(--muted);font-size:12.5px;font-weight:600;grid-column:1/-1">No years added yet.</div>`;
+    return;
+  }
+  grid.innerHTML = _years.map(y => `
+    <div class="year-card">
+      <div><div class="year-name">${y.name}</div><div class="year-id">ID: ${y.id}</div></div>
+      <button class="btn btn-outline-danger" style="font-size:11px;padding:5px 10px;" onclick="deleteYear(${y.id}, '${y.name}')">✕</button>
+    </div>
+  `).join('');
+}
+
+function setYearQuickPick(name) { document.getElementById('y-name').value = name; }
+
+async function submitAddYear() {
+  const name = document.getElementById('y-name').value.trim().toUpperCase();
+  const status = document.getElementById('add-year-status');
+  if (!name) { toast('Enter a year name', 'error'); return; }
+  const btn = document.getElementById('add-year-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
+  try {
+    const r = await fetch(`${API}/years`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
+    toast(`Year "${name}" added`, 'success');
+    log(`Year added: ${name}`, 'success');
+    document.getElementById('y-name').value = '';
+    await fetchYears(); renderYearList(); populateYearDropdown();
+    const ys = document.getElementById('stat-years'); if (ys) ys.textContent = _years.length;
+  } catch(e) {
+    toast('Failed: ' + e.message, 'error'); status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
+  }
+  btn.innerHTML = '✓ Add Year'; btn.disabled = false;
+}
+
+async function deleteYear(id, name) {
+  if (!confirm(`Delete year "${name}"? This cannot be undone.`)) return;
+  try {
+    const r = await fetch(`${API}/years/${id}`, {method: 'DELETE'});
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    toast(`Year "${name}" deleted`, 'success');
+    await fetchYears(); renderYearList(); populateYearDropdown();
+  } catch(e) { toast('Delete failed: ' + e.message, 'error'); }
+}
+
+// ── Subject multi-select ─────────────────────────────────────────────────────
+
+function renderSubjectMultiSelect() {
+  const container = document.getElementById('t-subjects-list');
+  if (!container) return;
+  if (_subjects.length === 0) {
+    container.innerHTML = `<div style="padding:14px 16px;color:var(--muted);font-size:12.5px;font-weight:600;">No subjects found. Seed the database first.</div>`;
+    return;
+  }
+  container.innerHTML = _subjects.map(s => `
+    <div class="multi-select-option ${_selectedSubjects.has(s.id) ? 'selected' : ''}" onclick="toggleSubjectSelection(${s.id}, this)">
+      <span class="check-icon">${_selectedSubjects.has(s.id) ? '✓' : ''}</span>
+      <span>${s.code} — ${s.name}</span>
+    </div>
+  `).join('');
+}
+
+function toggleSubjectSelection(id, el) {
+  if (_selectedSubjects.has(id)) { _selectedSubjects.delete(id); el.classList.remove('selected'); el.querySelector('.check-icon').textContent = ''; }
+  else { _selectedSubjects.add(id); el.classList.add('selected'); el.querySelector('.check-icon').textContent = '✓'; }
+}
+
+document.addEventListener('change', function(e) {
+  if (e.target.type === 'checkbox' && e.target.closest('.checkbox-item')) {
+    e.target.closest('.checkbox-item').classList.toggle('checked', e.target.checked);
+  }
+});
+
+// ── Add Teacher ──────────────────────────────────────────────────────────────
+
+async function submitAddTeacher() {
+  const name = document.getElementById('t-name').value.trim();
+  const code = document.getElementById('t-code').value.trim().toUpperCase();
+  const status = document.getElementById('add-teacher-status');
+  if (!name || !code) { toast('Please fill in Name and Short Code', 'error'); return; }
+  const selectedTypes = Array.from(document.querySelectorAll('#t-lecture-types input[type="checkbox"]:checked')).map(cb => cb.value);
+  const btn = document.getElementById('add-teacher-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
+  try {
+    const r = await fetch(`${API}/teachers`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, shortCode:code, subjectIds:Array.from(_selectedSubjects), lectureTypes:selectedTypes})});
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
+    toast(`Teacher ${code} added successfully`, 'success');
+    log(`Teacher added: ${code} — ${name}`, 'success');
+    clearTeacherForm(); await refreshDropdowns();
+  } catch(e) {
+    toast('Failed to add teacher: ' + e.message, 'error');
+    log('Add teacher error: ' + e.message, 'error');
+    status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
+  }
+  btn.innerHTML = '✓ Add Teacher'; btn.disabled = false;
+}
+
+function clearTeacherForm() {
+  document.getElementById('t-name').value = '';
+  document.getElementById('t-code').value = '';
+  _selectedSubjects.clear();
+  document.querySelectorAll('#t-lecture-types input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.closest('.checkbox-item').classList.remove('checked'); });
+  document.getElementById('add-teacher-status').textContent = '';
+  renderSubjectMultiSelect();
+}
+
+// ── Add Room ─────────────────────────────────────────────────────────────────
+
+async function submitAddRoom() {
+  const number = document.getElementById('r-number').value.trim();
+  const type   = document.getElementById('r-type').value;
+  const cap    = document.getElementById('r-capacity').value;
+  const status = document.getElementById('add-room-status');
+  if (!number || !type) { toast('Please fill in Room Number and Type', 'error'); return; }
+  const btn = document.getElementById('add-room-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
+  try {
+    const body = {roomNumber:number, roomType:type};
+    if (cap) body.capacity = parseInt(cap, 10);
+    const r = await fetch(`${API}/rooms`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
+    toast(`Room ${number} (${type}) added`, 'success');
+    log(`Room added: ${number} — ${type}`, 'success');
+    clearRoomForm(); await refreshDropdowns();
+  } catch(e) { toast('Failed to add room: ' + e.message, 'error'); status.textContent = '✗ ' + e.message; status.style.color = '#c0392b'; }
+  btn.innerHTML = '✓ Add Room'; btn.disabled = false;
+}
+
+function clearRoomForm() {
+  document.getElementById('r-number').value = '';
+  document.getElementById('r-type').value = '';
+  document.getElementById('r-capacity').value = '';
+  document.getElementById('add-room-status').textContent = '';
+}
+
+// ── Add Subject ──────────────────────────────────────────────────────────────
+
+async function submitAddSubject() {
+  const name   = document.getElementById('s-name').value.trim();
+  const code   = document.getElementById('s-code').value.trim().toUpperCase();
+  const year   = document.getElementById('s-year').value;
+  const status = document.getElementById('add-subject-status');
+  if (!name || !code) { toast('Please fill in Subject Name and Code', 'error'); return; }
+  if (!year) { toast('Please select an Academic Year', 'error'); return; }
+  const hasTheory   = document.querySelector('#sltype-theory input').checked;
+  const hasLab      = document.querySelector('#sltype-lab input').checked;
+  const hasTutorial = document.querySelector('#sltype-tutorial input').checked;
+  const btn = document.getElementById('add-subject-btn');
+  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
+  try {
+    const r = await fetch(`${API}/subjects`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, code, year, hasTheory, hasLab, hasTutorial})});
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
+    toast(`Subject ${code} added successfully`, 'success');
+    log(`Subject added: ${code} — ${name} (${year})`, 'success');
+    clearSubjectForm(); await fetchSubjects();
+  } catch(e) {
+    toast('Failed to add subject: ' + e.message, 'error');
+    log('Add subject error: ' + e.message, 'error');
+    status.textContent = '✗ ' + e.message; status.style.color = '#c0392b';
+  }
+  btn.innerHTML = '✓ Add Subject'; btn.disabled = false;
+}
+
+function clearSubjectForm() {
+  document.getElementById('s-name').value = '';
+  document.getElementById('s-code').value = '';
+  document.getElementById('s-year').value = '';
+  ['sltype-theory','sltype-lab','sltype-tutorial'].forEach(id => {
+    const el = document.getElementById(id);
+    el.querySelector('input').checked = false;
+    el.classList.remove('checked');
+  });
+  document.getElementById('add-subject-status').textContent = '';
+}
+
+// ── Seed & Generate ──────────────────────────────────────────────────────────
+
+async function runSeed() {
+  setStatus('running', 'SEEDING');
+  log('Seeding database…');
+  try {
+    const r = await fetch(`${API}/seed`, {method:'POST'});
+    const d = await r.json();
+    log('✓ ' + (d.message || JSON.stringify(d)), 'success');
+    setStatus('ready', 'READY');
+    toast('Database seeded successfully', 'success');
+    await refreshDropdowns();
+    await populateDivisionDropdowns();
+    renderYearList(); populateYearDropdown();
+  } catch(e) { log('Error: ' + e.message, 'error'); setStatus('error', 'ERROR'); toast('Seed failed — is backend running?', 'error'); }
+}
+
+async function generateTimetable() {
+  const btn = document.getElementById('gen-btn');
+  btn.innerHTML = '<span class="spinner"></span> Running DFS…'; btn.disabled = true;
+  setStatus('running', 'RUNNING'); log('Starting DFS backtracking scheduler…');
+  try {
+    const r = await fetch(`${API}/generate-timetable`, {method:'POST'});
+    const d = await r.json();
+    if (d.error) { log('✗ ' + d.error, 'error'); setStatus('error', 'ERROR'); toast(d.error, 'error'); }
+    else { log('✓ ' + d.message, 'success'); log('All constraints satisfied — conflict-free timetable saved', 'success'); setStatus('ready', 'READY'); toast(d.message, 'success'); }
+  } catch(e) { log('Error: ' + e.message, 'error'); setStatus('error', 'ERROR'); toast('Generation failed — is backend running?', 'error'); }
+  btn.innerHTML = '✦ Generate Timetable'; btn.disabled = false;
+}
+
+// ── Timetable rendering ──────────────────────────────────────────────────────
+
+function buildTimetableGrid(entries) {
+  const grid = {};
+  DAYS_ORDER.forEach(d => { grid[d] = {}; });
+  entries.forEach(e => {
+    const day = e.timeslot?.day, st = e.timeslot?.startTime;
+    if (!day || !st) return;
+    if (!grid[day]) grid[day] = {};
+    grid[day][st] = e;
+  });
+  return grid;
+}
+
+function renderCell(e) {
+  if (!e) return '<div class="cell-empty"></div>';
+  const cls     = (e.lectureType||'').toLowerCase();
+  const subj    = e.subject?.code || e.subject?.name || '?';
+  const subjF   = e.subject?.name || '';
+  const teacher = e.teacher?.shortCode || '';
+  const room    = e.room?.roomNumber || '';
+  const batch   = e.batch?.name ? `<span style="font-size:9px;color:#9b6dd6;font-weight:700">${e.batch.name}</span>` : '';
+  return `<div class="cell-entry ${cls}" title="${subjF} — ${teacher} — ${room}">
+    <div class="cell-subject">${subj}</div>
+    <div class="cell-teacher">${teacher}</div>
+    <div class="cell-room">${room}</div>${batch}
+  </div>`;
+}
+
+function normalizeEntries(raw) {
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.entries)) return raw.entries;
+  if (raw && Array.isArray(raw.data))    return raw.data;
+  return [];
+}
+
+function renderTimetableHTML(entries) {
+  if (!entries || entries.length === 0) {
+    return `<div class="empty-state"><div class="empty-icon">📭</div><h3>No entries found</h3><p>Generate a timetable first, or select a valid option above.</p></div>`;
+  }
+  const grid = buildTimetableGrid(entries);
+  let html = `<div class="timetable-wrapper"><table class="tt"><thead><tr><th>Slot</th>`;
+  DAYS_ORDER.forEach(d => { html += `<th class="day-head">${d.slice(0,3)}</th>`; });
+  html += `</tr></thead><tbody>`;
+  SLOT_TIMES.forEach(st => {
+    const nextSt = st === 1600 ? 1700 : st + 100;
+    const lbl = SLOT_LABELS[st] + '–' + SLOT_LABELS[nextSt];
+    html += `<tr><td>${lbl}</td>`;
+    DAYS_ORDER.forEach(day => {
+      const e = grid[day]?.[st];
+      if (st === 1300 && !e) html += `<td><div class="cell-entry lunch"><div class="cell-teacher" style="color:var(--muted-light);font-size:10px;font-weight:700;">LUNCH BREAK</div></div></td>`;
+      else html += `<td>${renderCell(e)}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table></div>`;
+  return html;
+}
+
+// ── Faculty grid ─────────────────────────────────────────────────────────────
+
 async function renderTeacherGrid() {
   const grid = document.getElementById('teacher-grid');
   grid.innerHTML = `<div style="padding:40px;text-align:center;color:var(--muted);grid-column:1/-1"><span class="spinner"></span> Loading faculty…</div>`;
@@ -1384,24 +1121,17 @@ function jumpToTeacherTT(code) {
   if (item) { showPage('teacher-tt', item); document.getElementById('teacher-select').value = code; loadTeacherTT(); }
 }
 
-// ── EDIT MODAL ──────────────────────────────────────────────────
+// ── Edit Modal ───────────────────────────────────────────────────────────────
+
 function openEditModal(teacherId) {
   const teacher = _teachers.find(t => t.id === teacherId);
   if (!teacher) return;
-
   document.getElementById('edit-teacher-id').value = teacher.id;
   document.getElementById('edit-t-name').value = teacher.name;
   document.getElementById('edit-t-code').value = teacher.shortCode;
   document.getElementById('edit-status').textContent = '';
-
-  // Reset edit subject selection
   _editSelectedSubjects.clear();
-  document.querySelectorAll('#edit-lecture-types input[type="checkbox"]').forEach(cb => {
-    cb.checked = false;
-    cb.closest('.checkbox-item').classList.remove('checked');
-  });
-
-  // Render subject multi-select for edit modal
+  document.querySelectorAll('#edit-lecture-types input[type="checkbox"]').forEach(cb => { cb.checked = false; cb.closest('.checkbox-item').classList.remove('checked'); });
   const container = document.getElementById('edit-subjects-list');
   if (_subjects.length === 0) {
     container.innerHTML = `<div style="padding:12px 14px;color:var(--muted);font-size:12px;font-weight:600;">No subjects found.</div>`;
@@ -1413,8 +1143,6 @@ function openEditModal(teacherId) {
       </div>
     `).join('');
   }
-
-  // Show current assignments as removable tags
   const assignDiv = document.getElementById('edit-current-assignments');
   const assignments = teacher.subjects || [];
   if (assignments.length === 0) {
@@ -1429,47 +1157,25 @@ function openEditModal(teacherId) {
       </span>`;
     }).join('');
   }
-
   document.getElementById('edit-modal').classList.add('open');
   document.getElementById('edit-t-name').focus();
 }
 
-function closeEditModal() {
-  document.getElementById('edit-modal').classList.remove('open');
-  _editSelectedSubjects.clear();
-}
-
-function handleModalBackdropClick(e) {
-  if (e.target === document.getElementById('edit-modal')) closeEditModal();
-}
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); _editSelectedSubjects.clear(); }
+function handleModalBackdropClick(e) { if (e.target === document.getElementById('edit-modal')) closeEditModal(); }
 
 function toggleEditSubject(id, el) {
-  if (_editSelectedSubjects.has(id)) {
-    _editSelectedSubjects.delete(id);
-    el.classList.remove('selected');
-    el.querySelector('.check-icon').textContent = '';
-  } else {
-    _editSelectedSubjects.add(id);
-    el.classList.add('selected');
-    el.querySelector('.check-icon').textContent = '✓';
-  }
+  if (_editSelectedSubjects.has(id)) { _editSelectedSubjects.delete(id); el.classList.remove('selected'); el.querySelector('.check-icon').textContent = ''; }
+  else { _editSelectedSubjects.add(id); el.classList.add('selected'); el.querySelector('.check-icon').textContent = '✓'; }
 }
 
 async function removeAssignment(tsId, tagEl) {
-  // Optimistically remove from UI
-  tagEl.style.opacity = '0.4';
-  tagEl.style.pointerEvents = 'none';
+  tagEl.style.opacity = '0.4'; tagEl.style.pointerEvents = 'none';
   try {
     const r = await fetch(`${API}/teacher-subjects/${tsId}`, { method: 'DELETE' });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    tagEl.remove();
-    toast('Assignment removed', 'success');
-    await fetchTeachers();
-  } catch(e) {
-    tagEl.style.opacity = '1';
-    tagEl.style.pointerEvents = 'auto';
-    toast('Failed to remove: ' + e.message, 'error');
-  }
+    tagEl.remove(); toast('Assignment removed', 'success'); await fetchTeachers();
+  } catch(e) { tagEl.style.opacity = '1'; tagEl.style.pointerEvents = 'auto'; toast('Failed to remove: ' + e.message, 'error'); }
 }
 
 async function submitEditTeacher() {
@@ -1477,114 +1183,53 @@ async function submitEditTeacher() {
   const name = document.getElementById('edit-t-name').value.trim();
   const code = document.getElementById('edit-t-code').value.trim().toUpperCase();
   const status = document.getElementById('edit-status');
-
   if (!name || !code) { toast('Name and code are required', 'error'); return; }
-
-  const selectedTypes = Array.from(
-    document.querySelectorAll('#edit-lecture-types input[type="checkbox"]:checked')
-  ).map(cb => cb.value);
-
+  const selectedTypes = Array.from(document.querySelectorAll('#edit-lecture-types input[type="checkbox"]:checked')).map(cb => cb.value);
   const btn = document.getElementById('edit-save-btn');
-  btn.innerHTML = '<span class="spinner"></span> Saving…';
-  btn.disabled = true;
-  status.textContent = '';
-
+  btn.innerHTML = '<span class="spinner"></span> Saving…'; btn.disabled = true; status.textContent = '';
   try {
-    // 1. Update name/code via PATCH
-    const r = await fetch(`${API}/teachers/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, shortCode: code })
-    });
-    if (!r.ok) {
-      const err = await r.json().catch(() => ({}));
-      throw new Error(err.detail || err.message || `HTTP ${r.status}`);
-    }
-
-    // 2. Add new subject assignments if any selected
+    const r = await fetch(`${API}/teachers/${id}`, { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, shortCode: code}) });
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
     if (_editSelectedSubjects.size > 0 && selectedTypes.length > 0) {
-      const r2 = await fetch(`${API}/teachers`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name, shortCode: code,
-          subjectIds: Array.from(_editSelectedSubjects),
-          lectureTypes: selectedTypes
-        })
-      });
-      if (!r2.ok) {
-        const err = await r2.json().catch(() => ({}));
-        throw new Error(err.detail || err.message || `HTTP ${r2.status}`);
-      }
+      const r2 = await fetch(`${API}/teachers`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, shortCode: code, subjectIds: Array.from(_editSelectedSubjects), lectureTypes: selectedTypes}) });
+      if (!r2.ok) { const err = await r2.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r2.status}`); }
     }
-
     toast(`${code} updated successfully`, 'success');
     log(`Teacher updated: ${code} — ${name}`, 'success');
-    closeEditModal();
-    await fetchTeachers();
-    renderTeacherGrid();
-    await refreshDropdowns();
-  } catch(e) {
-    toast('Save failed: ' + e.message, 'error');
-    status.textContent = '✗ ' + e.message;
-    status.style.color = '#c0392b';
-  }
-
-  btn.innerHTML = '✓ Save Changes';
-  btn.disabled = false;
+    closeEditModal(); await fetchTeachers(); renderTeacherGrid(); await refreshDropdowns();
+  } catch(e) { toast('Save failed: ' + e.message, 'error'); status.textContent = '✗ ' + e.message; status.style.color = '#c0392b'; }
+  btn.innerHTML = '✓ Save Changes'; btn.disabled = false;
 }
 
-// ── DELETE MODAL ─────────────────────────────────────────────────
+// ── Delete Modal ─────────────────────────────────────────────────────────────
+
 function openDeleteModal(id, code, name) {
-  _pendingDeleteId   = id;
-  _pendingDeleteCode = code;
+  _pendingDeleteId = id; _pendingDeleteCode = code;
   document.getElementById('confirm-title').textContent = `Delete ${code}?`;
-  document.getElementById('confirm-desc').textContent  =
-    `This will permanently remove "${name}" and all their timetable entries. This cannot be undone.`;
+  document.getElementById('confirm-desc').textContent = `This will permanently remove "${name}" and all their timetable entries. This cannot be undone.`;
   document.getElementById('delete-modal').classList.add('open');
 }
-
-function closeDeleteModal() {
-  document.getElementById('delete-modal').classList.remove('open');
-  _pendingDeleteId = null;
-}
-
-function handleDeleteBackdropClick(e) {
-  if (e.target === document.getElementById('delete-modal')) closeDeleteModal();
-}
+function closeDeleteModal() { document.getElementById('delete-modal').classList.remove('open'); _pendingDeleteId = null; }
+function handleDeleteBackdropClick(e) { if (e.target === document.getElementById('delete-modal')) closeDeleteModal(); }
 
 async function confirmDelete() {
   if (!_pendingDeleteId) return;
   const btn = document.getElementById('confirm-delete-btn');
-  btn.innerHTML = '<span class="spinner"></span> Deleting…';
-  btn.disabled = true;
-
+  btn.innerHTML = '<span class="spinner"></span> Deleting…'; btn.disabled = true;
   try {
     const r = await fetch(`${API}/teachers/${_pendingDeleteId}`, { method: 'DELETE' });
-    if (!r.ok) {
-      const err = await r.json().catch(() => ({}));
-      throw new Error(err.detail || err.message || `HTTP ${r.status}`);
-    }
+    if (!r.ok) { const err = await r.json().catch(()=>({})); throw new Error(err.detail||err.message||`HTTP ${r.status}`); }
     toast(`Teacher ${_pendingDeleteCode} deleted`, 'success');
     log(`Teacher deleted: ${_pendingDeleteCode}`, 'warn');
-    closeDeleteModal();
-    await fetchTeachers();
-    renderTeacherGrid();
-    await refreshDropdowns();
-  } catch(e) {
-    toast('Delete failed: ' + e.message, 'error');
-  }
-
-  btn.innerHTML = 'Yes, Delete';
-  btn.disabled = false;
+    closeDeleteModal(); await fetchTeachers(); renderTeacherGrid(); await refreshDropdowns();
+  } catch(e) { toast('Delete failed: ' + e.message, 'error'); }
+  btn.innerHTML = 'Yes, Delete'; btn.disabled = false;
 }
 
-// ── ESC key closes modals
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeEditModal(); closeDeleteModal(); }
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeEditModal(); closeDeleteModal(); } });
 
-// ── Init
+// ── Init ─────────────────────────────────────────────────────────────────────
+
 (async function init() {
   log('Connecting to backend…', 'info');
   try {

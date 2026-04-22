@@ -1,83 +1,82 @@
 """
 Fixed scheduler.py
 
-Bugs fixed:
-1. Theory was only allowed in 10:00-13:00 range, starving later divisions (C, D...) of rooms.
-   Fix: Use the FULL time window for theory (08:00-13:00 for MORNING, 10:00-18:00 for AFTERNOON).
-
-2. assign_theory did NOT check batch_slot, so theory was scheduled at the same time as a
-   lab session for some batches of the same division.
-   Fix: Block any slot where ANY batch of that division already has a lab/tutorial.
-
-3. With 6+ divisions all competing for theory rooms in the 10:00-12:00 window,
-   later divisions (C, D ...) ran out of rooms.
-   Fix: Expand the allowed theory window to the full time window (fix #1 above).
-
-4. Time window boundaries corrected:
-   MORNING:   08:00 - 14:00  (startTime 800  ..< 1400, excluding 1300 lunch)
-   AFTERNOON: 10:00 - 18:00  (startTime 1000 ..< 1800, excluding 1300 lunch)
+Key fixes:
+1. Lab day spread: each subject gets its OWN base day offset so 4 subjects
+   don't all land on the same day, exhausting slots.
+2. Elective filter: TY-A gets MPBDA only, TY-B gets IFSSD only — others skipped.
+3. Tutorial slots expanded: also try 14:00-17:00 Mon-Thu for AFTERNOON divisions.
+4. Theory time window: MORNING 08-14, AFTERNOON 10-18.
+5. Year filtering done in generate_timetable via pre-built dict (bypasses Prisma attr issue).
 """
 
 from collections import defaultdict
 from app.models.session import Session
 
-LUNCH        = {1300}
-LAB_SUBJECTS = ["ADS", "POCACD", "AI", "OS"]
-DAYS         = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
-
-# Each batch index rotates which subject it has in lab on each day
-BATCH_LAB_ROTATION = {
-    0: {"MONDAY": "ADS",    "TUESDAY": "POCACD", "WEDNESDAY": "AI",  "THURSDAY": "OS"},
-    1: {"MONDAY": "POCACD", "TUESDAY": "AI",     "WEDNESDAY": "OS",  "THURSDAY": "ADS"},
-    2: {"MONDAY": "AI",     "TUESDAY": "OS",     "WEDNESDAY": "ADS", "THURSDAY": "POCACD"},
-}
+LUNCH = {1300}
+DAYS  = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
 
 
 def expand_sessions(subjects, division, batches):
-    subj = {s.code: s for s in subjects}
+    """
+    subjects are ALREADY filtered to this division's year by generate_timetable.
+    """
     sessions = []
 
-    for code in ["AI", "OS", "ADS", "POCACD", "RAAD", "FCTC", "DV"]:
-        s = subj.get(code)
-        if not s or s.theoryHours == 0:
-            continue
-        for _ in range(s.theoryHours):
+    rotation_days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY"]
+    div_offset = division.id % len(rotation_days)
+
+    for subj_idx, subject in enumerate(subjects):
+        elective_group_id = subject.electiveGroupId
+
+        # ── ELECTIVE FILTER ─────────────────────────────────────────────────
+        if elective_group_id is not None:
+            if division.name == "A" and subject.code != "MPBDA":
+                continue
+            if division.name == "B" and subject.code != "IFSSD":
+                continue
+        # ────────────────────────────────────────────────────────────────────
+
+        theory_hours = subject.theoryHours or 0
+        lab_hours    = subject.labHours    or 0
+        tut_hours    = subject.tutHours    or 0
+
+        print(f"    [expand] Div={division.name} INCLUDE {subject.code} "
+              f"T={theory_hours} L={lab_hours} TUT={tut_hours}", flush=True)
+
+        # ── THEORY ──────────────────────────────────────────────────────────
+        for _ in range(theory_hours):
             sessions.append(Session(
-                s.code, s.name, "THEORY", 1,
+                subject.code, subject.name, "THEORY", 1,
                 division_id=division.id,
-                elective_group_id=getattr(s, 'electiveGroupId', None)
+                elective_group_id=elective_group_id,
             ))
 
-    for bidx, batch in enumerate(batches):
-        rotation = BATCH_LAB_ROTATION.get(bidx, {})
-        for day, lab_code in rotation.items():
-            s = subj.get(lab_code)
-            if not s or s.labHours == 0:
-                continue
-            sess = Session(s.code, s.name, "LAB", 2,
-                           division_id=division.id, elective_group_id=None)
-            sess.batch_index  = bidx
-            sess.assigned_day = day
-            sessions.append(sess)
+        # ── LAB — one session per batch ──────────────────────────────────────
+        # subj_idx shifts base day so each subject lands on a different day
+        if lab_hours > 0:
+            for bidx in range(len(batches)):
+                day = rotation_days[(bidx + div_offset + subj_idx) % len(rotation_days)]
+                sess = Session(
+                    subject.code, subject.name, "LAB", 2,
+                    division_id=division.id,
+                    elective_group_id=None,
+                )
+                sess.batch_index  = bidx
+                sess.assigned_day = day
+                sessions.append(sess)
 
-    dt = subj.get("DT")
-    if dt and dt.tutHours > 0:
-        for bidx in range(len(batches)):
-            sess = Session(dt.code, dt.name, "TUTORIAL", 1,
-                           division_id=division.id, elective_group_id=None)
-            sess.batch_index = bidx
-            sess.tut_subj    = "DT"
-            sessions.append(sess)
-
-    dv = subj.get("DV")
-    if dv and dv.tutHours > 0:
-        for bidx in range(len(batches)):
-            sess = Session(dv.code, dv.name, "TUTORIAL", 1,
-                           division_id=division.id,
-                           elective_group_id=getattr(dv, 'electiveGroupId', None))
-            sess.batch_index = bidx
-            sess.tut_subj    = "DV"
-            sessions.append(sess)
+        # ── TUTORIAL — one session per batch ────────────────────────────────
+        if tut_hours > 0:
+            for bidx in range(len(batches)):
+                sess = Session(
+                    subject.code, subject.name, "TUTORIAL", 1,
+                    division_id=division.id,
+                    elective_group_id=elective_group_id,
+                )
+                sess.batch_index = bidx
+                sess.tut_subj    = subject.code
+                sessions.append(sess)
 
     return sessions
 
@@ -98,10 +97,6 @@ def nxt(slot, by_day):
 def _try_assign_lab_group(group, div_batches, tlist, l_rooms,
                            day_slots, slots_by_day,
                            teacher_slot, room_slot, batch_slot):
-    """
-    Try every 2-consecutive-slot window in day_slots.
-    Returns (slot, nslot, pending_list) on success, or None on failure.
-    """
     for slot in day_slots:
         nslot = nxt(slot, slots_by_day)
         if not nslot or nslot.startTime in LUNCH:
@@ -165,11 +160,6 @@ def _try_assign_lab_group(group, div_batches, tlist, l_rooms,
 
 def assign_labs_per_division(lab_sessions, batches, ts_map, l_rooms,
                               division_slots, teacher_slot, room_slot, batch_slot):
-    """
-    Schedule labs division-by-division.
-    All batches for a (subject, day) are placed atomically into the SAME slot
-    with DIFFERENT rooms/teachers.
-    """
     by_division = defaultdict(lambda: defaultdict(list))
     for sess in lab_sessions:
         by_division[sess.division_id][(sess.subject_code, sess.assigned_day)].append(sess)
@@ -227,16 +217,18 @@ def assign_tutorials(tut_sessions, batches, ts_map, t_rooms,
     TUT_ROOM_NUMBERS = {"4304B", "4307"}
     tut_rooms = [r for r in t_rooms if r.roomNumber in TUT_ROOM_NUMBERS] or t_rooms
 
-    # Tutorial candidate slots: 12:00 Mon-Thu (avoid Friday morning crunch)
-    # or Friday 14:00+ for AFTERNOON divisions
+    # Expanded tutorial candidate slots:
+    # 12:00 Mon-Thu  +  14:00-17:00 any day (covers AFTERNOON TY divisions)
     div_tut_slots = {}
     for div_id, sbd in division_slots.items():
         tslots = []
         for day in DAYS:
             for slot in sbd.get(day, []):
+                if is_lunch(slot):
+                    continue
                 if day != "FRIDAY" and slot.startTime == 1200:
                     tslots.append(slot)
-                elif day == "FRIDAY" and slot.startTime >= 1400 and not is_lunch(slot):
+                elif 1400 <= slot.startTime <= 1700:
                     tslots.append(slot)
         div_tut_slots[div_id] = tslots
 
@@ -285,29 +277,15 @@ def assign_tutorials(tut_sessions, batches, ts_map, t_rooms,
 
 def assign_theory(theory_sessions, batches, ts_map, t_rooms, division_slots,
                   teacher_slot, room_slot, batch_slot, div_time_windows):
-    """
-    Assign theory sessions (division-wide, batchId=NULL).
-
-    KEY FIXES vs original:
-    - Uses the FULL time window per division (not just 10:00-13:00), so later
-      divisions don't run out of available rooms.
-    - Checks batch_slot: skips any slot where ANY batch of this division already
-      has a lab/tutorial, preventing theory from clashing with a lab for some batches.
-    - Day cap raised to 3 per day (was 2) to allow more spread when needed.
-    - MORNING:   theory slots = 08:00-14:00, excluding lunch (1300)
-    - AFTERNOON: theory slots = 10:00-18:00, excluding lunch (1300)
-    """
-    div_slot      = set()   # (division_id, slot_id) — at most ONE theory per slot per div
-    div_subj_day  = set()   # (division_id, subject_code, day) — no subject twice same day
+    div_slot      = set()
+    div_subj_day  = set()
     div_day_count = {}
     room_count    = {}
 
-    # Build a lookup: division_id -> set of batch_ids
     div_batch_ids = defaultdict(set)
     for b in batches:
         div_batch_ids[b.divisionId].add(b.id)
 
-    # Allow up to 3 theory slots per day per division for flexibility
     day_caps  = {"MONDAY": 3, "TUESDAY": 3, "WEDNESDAY": 3, "THURSDAY": 3, "FRIDAY": 4}
     day_order = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
 
@@ -315,12 +293,9 @@ def assign_theory(theory_sessions, batches, ts_map, t_rooms, division_slots,
         tw  = div_time_windows.get(sess.division_id, "MORNING")
         sbd = division_slots.get(sess.division_id, {})
 
-        # Build allowed slots for each day based on full time window
         if tw == "AFTERNOON":
-            # 10:00 to 18:00, excluding lunch
             def in_window(st): return 1000 <= st < 1800 and st not in LUNCH
         else:
-            # MORNING: 08:00 to 14:00, excluding lunch
             def in_window(st): return 800 <= st < 1400 and st not in LUNCH
 
         allowed = {}
@@ -331,7 +306,6 @@ def assign_theory(theory_sessions, batches, ts_map, t_rooms, division_slots,
         sorted_rooms = sorted(t_rooms, key=lambda r: room_count.get(r.id, 0))
         assigned     = False
 
-        # Get all batch IDs for this division (to check batch_slot conflicts)
         this_div_batch_ids = div_batch_ids.get(sess.division_id, set())
 
         for day in day_order:
@@ -344,14 +318,12 @@ def assign_theory(theory_sessions, batches, ts_map, t_rooms, division_slots,
                 if (sess.division_id, slot.id) in div_slot:
                     continue
 
-                # --- FIX: skip slot if ANY batch of this division is busy (lab/tutorial) ---
                 batch_conflict = any(
                     (bid, slot.id) in batch_slot
                     for bid in this_div_batch_ids
                 )
                 if batch_conflict:
                     continue
-                # --------------------------------------------------------------------------
 
                 for t in tlist:
                     if (t.id, slot.id) in teacher_slot:
@@ -359,7 +331,6 @@ def assign_theory(theory_sessions, batches, ts_map, t_rooms, division_slots,
                     for r in sorted_rooms:
                         if (r.id, slot.id) in room_slot:
                             continue
-                        # Commit
                         teacher_slot.add((t.id, slot.id))
                         room_slot.add((r.id, slot.id))
                         div_slot.add((sess.division_id, slot.id))
@@ -425,11 +396,21 @@ def generate_timetable(data):
         if t not in ts_map[key]:
             ts_map[key].append(t)
 
-    # Per-division slot views filtered by time window
-    # MORNING:   08:00 – 14:00  (800  ≤ startTime < 1400)
-    # AFTERNOON: 10:00 – 18:00  (1000 ≤ startTime < 1800)
-    division_slots    = {}
-    div_time_windows  = {}   # division_id -> "MORNING" | "AFTERNOON"
+    # ── PRE-BUILD: subjects grouped by yearId (bypasses Prisma attr issue) ──
+    subjects_by_year: dict = defaultdict(list)
+    for s in subjects:
+        yr = s.yearId
+        if yr is not None:
+            subjects_by_year[yr].append(s)
+        else:
+            print(f"  [warn] Subject {s.code} has yearId=None — skipped", flush=True)
+
+    print(f"  Subjects by year: { {k: [s.code for s in v] for k,v in subjects_by_year.items()} }",
+          flush=True)
+    # ────────────────────────────────────────────────────────────────────────
+
+    division_slots   = {}
+    div_time_windows = {}
 
     for division in divisions:
         tw = getattr(division, 'timeWindow', 'MORNING')
@@ -446,43 +427,47 @@ def generate_timetable(data):
             for d, day_slots in full_slots_by_day.items()
         }
 
-    # Collect all sessions
     all_sessions = []
     for division in divisions:
         tw          = getattr(division, 'timeWindow', 'MORNING')
         div_batches = [b for b in batches if b.divisionId == division.id]
-        sessions    = expand_sessions(subjects, division, div_batches)
+
+        div_year_id  = division.yearId
+        div_subjects = subjects_by_year.get(div_year_id, [])
+
+        print(f"  [gen] Div={division.name} id={division.id} yearId={div_year_id} "
+              f"subjects={[s.code for s in div_subjects]}", flush=True)
+
+        sessions = expand_sessions(div_subjects, division, div_batches)
         for sess in sessions:
             sess.time_window = tw
+
         lab_c    = sum(1 for s in sessions if s.lecture_type == "LAB")
         tut_c    = sum(1 for s in sessions if s.lecture_type == "TUTORIAL")
         theory_c = sum(1 for s in sessions if s.lecture_type == "THEORY")
-        print(f"  Div {division.name} ({tw}): {len(sessions)} sessions "
+        print(f"  Div {division.name} id={division.id} ({tw}): {len(sessions)} sessions "
               f"LAB={lab_c} TUT={tut_c} THEORY={theory_c}", flush=True)
+
         all_sessions.extend(sessions)
 
     lab_sessions    = [s for s in all_sessions if s.lecture_type == "LAB"]
     tut_sessions    = [s for s in all_sessions if s.lecture_type == "TUTORIAL"]
     theory_sessions = [s for s in all_sessions if s.lecture_type == "THEORY"]
 
-    # Global conflict sets shared across ALL divisions
     teacher_slot = set()
     room_slot    = set()
     batch_slot   = set()
 
-    # 1. Labs first (they have the most rigid constraints: fixed day, 2-slot blocks)
     assign_labs_per_division(
         lab_sessions, batches, ts_map, l_rooms,
         division_slots, teacher_slot, room_slot, batch_slot
     )
 
-    # 2. Tutorials (12:00 slots Mon-Thu)
     assign_tutorials(
         tut_sessions, batches, ts_map, t_rooms,
         division_slots, teacher_slot, room_slot, batch_slot
     )
 
-    # 3. Theory (division-wide, now checks batch_slot and uses full time window)
     assign_theory(
         theory_sessions, batches, ts_map, t_rooms,
         division_slots, teacher_slot, room_slot, batch_slot,
