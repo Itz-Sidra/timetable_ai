@@ -36,7 +36,7 @@ def expand_sessions(subjects, division, batches):
                 elective_group_id=getattr(s, 'electiveGroupId', None)))
 
     for bidx, batch in enumerate(batches):
-        rotation = BATCH_LAB_ROTATION[bidx]
+        rotation = BATCH_LAB_ROTATION.get(bidx, {})
         for day, lab_code in rotation.items():
             s = subj.get(lab_code)
             if not s or s.labHours == 0:
@@ -55,7 +55,7 @@ def expand_sessions(subjects, division, batches):
             sess.batch_index = bidx
             sess.tut_subj = "DT"
             sessions.append(sess)
-            
+
     dv = subj.get("DV")
     if dv and dv.tutHours > 0:
         for bidx in range(len(batches)):
@@ -81,14 +81,20 @@ def nxt(slot, by_day):
     return None if n.startTime in LUNCH else n
 
 
-def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms, slots_by_day):
-    teacher_slot = set()
-    room_slot    = set()
-    batch_slot   = set()
+def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
+                  slots_by_day, teacher_slot, room_slot, batch_slot):
+    # Tutorial rooms override: use specific rooms if available, else fall back to t_rooms
+    TUT_ROOM_NUMBERS = {"4304B", "4307"}
+    tut_rooms = [r for r in t_rooms if r.roomNumber in TUT_ROOM_NUMBERS] or t_rooms
 
     for sess in lab_sessions:
         bidx  = sess.batch_index
-        batch = batches[bidx]
+        # find the batch object for this division
+        div_batches = [b for b in batches if b.divisionId == sess.division_id]
+        if bidx >= len(div_batches):
+            print(f"   LAB {sess.subject_code} B{bidx+1} no batch object", flush=True)
+            continue
+        batch = div_batches[bidx]
         day   = sess.assigned_day
         tlist = ts_map.get((sess.subject_code, "LAB"), [])
         day_slots = slots_by_day.get(day, [])
@@ -96,7 +102,7 @@ def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
         assigned = False
         for slot in day_slots:
             if slot.startTime < LAB_START or slot.startTime >= 1000:
-                continue  
+                continue
             nslot = nxt(slot, slots_by_day)
             if not nslot or nslot.startTime >= 1000:
                 continue
@@ -138,7 +144,11 @@ def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
 
     for sess in tut_sessions:
         bidx  = sess.batch_index
-        batch = batches[bidx]
+        div_batches = [b for b in batches if b.divisionId == sess.division_id]
+        if bidx >= len(div_batches):
+            print(f"  TUT {sess.tut_subj} B{bidx+1} no batch object", flush=True)
+            continue
+        batch = div_batches[bidx]
         tlist = ts_map.get((sess.tut_subj, "TUTORIAL"), [])
         assigned = False
         for slot in tut_slots:
@@ -147,7 +157,7 @@ def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
             for t in tlist:
                 if (t.id, slot.id) in teacher_slot:
                     continue
-                for r in t_rooms:
+                for r in tut_rooms:
                     if (r.id, slot.id) in room_slot:
                         continue
                     teacher_slot.add((t.id, slot.id))
@@ -163,13 +173,12 @@ def assign_greedy(lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms,
         if not assigned:
             print(f"  TUT {sess.tut_subj} B{bidx+1} unassigned", flush=True)
 
-    return True, teacher_slot, room_slot
+    return True
 
 
 def assign_theory(theory_sessions, batches, ts_map, t_rooms, slots_by_day,
-                  used_teacher_slot, used_room_slot):
-    teacher_slot  = set(used_teacher_slot)
-    room_slot     = set(used_room_slot)
+                  teacher_slot, room_slot):
+    # NOTE: teacher_slot and room_slot are passed by reference (sets mutated in place)
     div_slot      = set()
     div_subj_day  = set()
     div_day_count = {}
@@ -218,7 +227,7 @@ def assign_theory(theory_sessions, batches, ts_map, t_rooms, slots_by_day,
                 if assigned: break
             if assigned: break
         if not assigned:
-            print(f"  THEORY {sess.subject_code} unassigned", flush=True)
+            print(f"  THEORY {sess.subject_code} div={sess.division_id} unassigned", flush=True)
 
 
 def generate_timetable(data):
@@ -230,14 +239,23 @@ def generate_timetable(data):
     batches             = data["batches"]
     teacher_assignments = data["teacher_assignments"]
 
+    # Validation
+    if not teachers or not subjects or not rooms:
+        print("  Missing teachers, subjects, or rooms", flush=True)
+        return None
+    if not divisions:
+        print("  No divisions found", flush=True)
+        return None
+
     t_rooms = [r for r in rooms if r.roomType == "THEORY"]
     l_rooms = [r for r in rooms if r.roomType == "LAB"]
 
-    slots_by_day = {}
+    # Build slots_by_day from full slot list (time window filtering happens per-division below)
+    full_slots_by_day = {}
     for s in slots:
-        slots_by_day.setdefault(s.day, []).append(s)
-    for d in slots_by_day:
-        slots_by_day[d].sort(key=lambda x: x.startTime)
+        full_slots_by_day.setdefault(s.day, []).append(s)
+    for d in full_slots_by_day:
+        full_slots_by_day[d].sort(key=lambda x: x.startTime)
 
     teacher_obj = {t.id: t for t in teachers}
     subject_obj = {s.id: s for s in subjects}
@@ -252,23 +270,48 @@ def generate_timetable(data):
         if t not in ts_map[key]:
             ts_map[key].append(t)
 
-    division = divisions[0]
-    all_sessions = expand_sessions(subjects, division, batches)
+    # ── Global conflict sets (shared across ALL divisions) ──
+    teacher_slot = set()
+    room_slot    = set()
+    batch_slot   = set()
 
-    lab_sessions    = [s for s in all_sessions if s.lecture_type == "LAB"]
-    tut_sessions    = [s for s in all_sessions if s.lecture_type == "TUTORIAL"]
-    theory_sessions = [s for s in all_sessions if s.lecture_type == "THEORY"]
+    all_sessions = []
 
-    print(f"  Sessions: {len(all_sessions)}  LAB={len(lab_sessions)} "
-          f"TUT={len(tut_sessions)} THEORY={len(theory_sessions)}", flush=True)
+    for division in divisions:
+        div_batches = [b for b in batches if b.divisionId == division.id]
 
-    ok, used_t, used_r = assign_greedy(
-        lab_sessions, tut_sessions, batches, ts_map, l_rooms, t_rooms, slots_by_day)
-    if not ok:
-        return None
+        # Apply time window filter per division
+        tw = getattr(division, 'timeWindow', 'MORNING')
+        allowed_start, allowed_end = (1000, 1800) if tw == "AFTERNOON" else (800, 1400)
+        slots_by_day = {}
+        for d, day_slots in full_slots_by_day.items():
+            slots_by_day[d] = [
+                s for s in day_slots
+                if allowed_start <= s.startTime < allowed_end
+            ]
 
-    assign_theory(theory_sessions, batches, ts_map, t_rooms,
-                  slots_by_day, used_t, used_r)
+        sessions = expand_sessions(subjects, division, div_batches)
 
-    print(f" All {len(all_sessions)} sessions scheduled", flush=True)
+        lab_sessions    = [s for s in sessions if s.lecture_type == "LAB"]
+        tut_sessions    = [s for s in sessions if s.lecture_type == "TUTORIAL"]
+        theory_sessions = [s for s in sessions if s.lecture_type == "THEORY"]
+
+        print(f"  Div {division.name} ({tw}): {len(sessions)} sessions "
+              f"LAB={len(lab_sessions)} TUT={len(tut_sessions)} THEORY={len(theory_sessions)}",
+              flush=True)
+
+        assign_greedy(
+            lab_sessions, tut_sessions, div_batches, ts_map,
+            l_rooms, t_rooms, slots_by_day,
+            teacher_slot, room_slot, batch_slot
+        )
+
+        assign_theory(
+            theory_sessions, div_batches, ts_map, t_rooms,
+            slots_by_day, teacher_slot, room_slot
+        )
+
+        all_sessions.extend(sessions)
+
+    print(f"  Total sessions scheduled: {len(all_sessions)}", flush=True)
     return all_sessions

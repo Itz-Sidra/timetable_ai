@@ -38,6 +38,7 @@ model Division {
   id     Int    @id @default(autoincrement())
   name   String
   yearId Int
+  timeWindow String @default("MORNING")
   year   Year   @relation(fields: [yearId], references: [id])
 
   batches   Batch[]

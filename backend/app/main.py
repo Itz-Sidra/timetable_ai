@@ -46,17 +46,18 @@ async def run_seed():
 
 @app.post("/generate-timetable")
 async def generate():
-    year = await db.year.find_first(where={"name": "SY"})
-    if not year:
-        return {"error": "Run /seed first"}
-
     teachers            = await db.teacher.find_many()
-    subjects            = await db.subject.find_many(where={"yearId": year.id})
+    subjects            = await db.subject.find_many()
     rooms               = await db.room.find_many()
     slots               = await db.timeslot.find_many(order=[{"day": "asc"}, {"startTime": "asc"}])
-    divisions           = await db.division.find_many(where={"yearId": year.id})
+    divisions           = await db.division.find_many()
     batches             = await db.batch.find_many()
     teacher_assignments = await db.teachersubject.find_many()
+
+    if not teachers or not subjects or not rooms:
+        return {"error": "Please add teachers, subjects, and rooms first"}
+    if not divisions:
+        return {"error": "No divisions found — run /seed first"}
 
     data = {
         "teachers":            teachers,
@@ -71,7 +72,7 @@ async def generate():
     sessions = generate_timetable(data)
 
     if sessions is None:
-        return {"error": "No valid timetable found — constraints too tight"}
+        return {"error": "No valid timetable found — add teachers, subjects, and rooms first"}
 
     print("Reconnecting to DB before save...", flush=True)
     try:
@@ -116,12 +117,7 @@ async def generate():
         elif s.lecture_type == "TUTORIAL":
             if not s.teacher_id or not s.room_id or not s.timeslot:
                 continue
-            bidx = getattr(s, "batch_index", None)
-            if bidx is not None:
-                batch_obj = div_batches[bidx] if bidx < len(div_batches) else None
-                batch_id = batch_obj.id if batch_obj else None
-            else:
-                batch_id = getattr(s, "_batch_id", None)
+            batch_id = getattr(s, "_batch_id", None)
             try:
                 await db.timetableentry.create(data={
                     "divisionId":  s.division_id,
